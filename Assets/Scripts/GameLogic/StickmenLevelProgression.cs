@@ -4,7 +4,7 @@ using UnityEngine;
 public class StickmenLevelProgression
 {
     private const int TotalLevels = 45;
-    private const int StartStickmen = 20;
+    private const int StartStickmen = 24;
     private const int MaxStickmen = 390;
 
 

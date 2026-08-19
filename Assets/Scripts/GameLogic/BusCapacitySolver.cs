@@ -11,11 +11,7 @@ public class BusCapacitySolver
       var result = new List<int>();
 
       if (TryDecompose(totalSeats, result))
-      {
-         Shuffle(result);
-         
          return result;
-      }
       
       return null;
    }
@@ -27,8 +23,10 @@ public class BusCapacitySolver
 
       if (remainingSeats < 0)
          return false;
+      
+      var shuffledCapacities = _availableCapacities.OrderBy(_ => Random.value).ToList();
 
-      foreach (var capacity in _availableCapacities.OrderByDescending(capacity => capacity))
+      foreach (var capacity in shuffledCapacities)
       {
          if (remainingSeats - capacity < 0)
             continue;
@@ -42,14 +40,5 @@ public class BusCapacitySolver
       }
       
       return false;
-   }
-
-   private void Shuffle(List<int> list)
-   {
-      for (int i = list.Count - 1; i > 0; i--)
-      {
-         int j =  Random.Range(0, i + 1);
-         (list[i], list[j]) = (list[j], list[i]);
-      }
    }
 }
