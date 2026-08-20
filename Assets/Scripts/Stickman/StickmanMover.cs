@@ -3,41 +3,49 @@ using UnityEngine;
 
 public class StickmanMover : MonoBehaviour
 {
-   [SerializeField] private float moveSpeed = 5f;
-   [SerializeField] private float arrivalThreshold = 0.05f;
+    [SerializeField] private float moveSpeed = 5f;
 
-   private Queue<Vector3> _remainingWaypoints;
-   private Vector3 _currentTarget;
-   private bool _isMoving = false;
+    private readonly StickmanPath _pathCalculator = new StickmanPath();
 
-   private void Update()
-   {
-      if (!_isMoving)
-         return;
-      
-      transform.position = Vector3.MoveTowards(transform.position, _currentTarget, moveSpeed * Time.deltaTime);
-      
-      if (Vector3.Distance(transform.position, _currentTarget) < arrivalThreshold)
-         MoveToNextWaypoint();
-   }
+    private IReadOnlyList<Vector3> _route;
+    private StickmanMover _leader;
+    
+    private float _minSpacing;
+    private float _maxDistance;
+    private bool _isMoving;
 
-   public void StartMoving(List<Vector3> path)
-   {
-      _remainingWaypoints = new Queue<Vector3>(path);
+    public float CurrentDistance { get; private set; }
 
-      MoveToNextWaypoint();
-   }
+    public void Initialize(IReadOnlyList<Vector3> route, StickmanMover leader, float minSpacing, float maxDistance)
+    {
+        _route = route;
+        _leader = leader;
+        _minSpacing = minSpacing;
+        _maxDistance = maxDistance;
+        CurrentDistance = 0f;
+    }
 
-   private void MoveToNextWaypoint()
-   {
-      if (_remainingWaypoints.Count > 0)
-      {
-         _currentTarget = _remainingWaypoints.Dequeue();
-         _isMoving = true;
-      }
-      else
-      {
-         _isMoving = false;
-      }
-   }
+    public void StartMoving()
+    {
+        _isMoving = true;
+    }
+
+    private void Update()
+    {
+        if (!_isMoving || _route == null)
+            return;
+
+        float allowedDistance = _maxDistance;
+
+        if (_leader != null)
+            allowedDistance = Mathf.Min(allowedDistance, _leader.CurrentDistance - _minSpacing);
+
+        float desiredDistance = Mathf.Min(CurrentDistance + moveSpeed * Time.deltaTime, allowedDistance);
+
+        if (desiredDistance <= CurrentDistance)
+            return;
+
+        CurrentDistance = desiredDistance;
+        transform.position = _pathCalculator.GetPointAtDistance(_route, CurrentDistance);
+    }
 }
