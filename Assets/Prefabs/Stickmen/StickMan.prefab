@@ -660,8 +660,10 @@ GameObject:
   m_Component:
   - component: {fileID: 2222615538149900119}
   - component: {fileID: 6378207671594616785}
+  - component: {fileID: 5174806394658015397}
   - component: {fileID: -2070247212586151134}
   - component: {fileID: 4770566813636137480}
+  - component: {fileID: 7983147386771011367}
   m_Layer: 0
   m_Name: StickMan
   m_TagString: Untagged
@@ -707,6 +709,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5174806394658015397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7190392360658972332}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad35f4624ddbb40ac9b43dd3f2352a4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _mover: {fileID: -2070247212586151134}
+  _colorSetter: {fileID: 4770566813636137480}
+  _animator: {fileID: 7983147386771011367}
 --- !u!114 &-2070247212586151134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -720,7 +737,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  arrivalThreshold: 0.05
 --- !u!114 &4770566813636137480
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -735,6 +751,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetRenderer: {fileID: 4528812574583756579}
   materialIndex: 0
+--- !u!114 &7983147386771011367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7190392360658972332}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2fa44d23b87d4ed5a43416e985b8317, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animator: {fileID: 6378207671594616785}
 --- !u!1 &7193394844209572896
 GameObject:
   m_ObjectHideFlags: 0

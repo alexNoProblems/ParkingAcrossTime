@@ -24,6 +24,7 @@ public class StickmenSpawner : MonoBehaviour, ISpawner<StickmanSpawnData>
     private StickmanPath _stickmanPath;
     private StickmanMover _lastSpawnedMover;
     private List<Vector3> _route;
+    
     private float _routeTotalLength;
     private float _queueStartDistance;
     private float _queueTotalLength;
@@ -32,11 +33,11 @@ public class StickmenSpawner : MonoBehaviour, ISpawner<StickmanSpawnData>
     {
         _waitForSeconds = new WaitForSeconds(spawnInterval);
         _stickmanPath = new StickmanPath();
-        
+
         _route = BuildRoute();
         _routeTotalLength = _stickmanPath.GetTotalLength(_route);
-        
-        _queueStartDistance = CalculateQueueStartDistance(); 
+
+        _queueStartDistance = CalculateQueueStartDistance();
         _queueTotalLength = _stickmanPath.GetTotalLength(queueWaypoints.Select(w => w.position).ToList());
     }
 
@@ -49,29 +50,19 @@ public class StickmenSpawner : MonoBehaviour, ISpawner<StickmanSpawnData>
             if (_spawnedCount >= maxCapacity)
                 yield break;
 
-            var stickman = Instantiate(stickmanPrefab, spawnPoint.position, Quaternion.identity);
+            var stickmanObject = Instantiate(stickmanPrefab, spawnPoint.position, Quaternion.identity);
 
-            if (stickman.TryGetComponent<ColorSetter>(out var colorSetter))
-            {
-                colorSetter.SetColor(data.Color);
-            }
-            else
-            {
-                Debug.LogError($"На префабе {stickmanPrefab.name} отсутствует ColorSetter", stickman);
-            }
-
-            if (stickman.TryGetComponent<StickmanMover>(out var mover))
+            if (stickmanObject.TryGetComponent<Stickman>(out var stickman))
             {
                 float maxDistance = _lastSpawnedMover == null ? _queueStartDistance : _routeTotalLength;
 
-                mover.Initialize(_route, _lastSpawnedMover, queueSlotSpacing, maxDistance);
-                mover.StartMoving();
+                stickman.Initialize(data.Color, _route, _lastSpawnedMover, queueSlotSpacing, maxDistance);
 
-                _lastSpawnedMover = mover;
+                _lastSpawnedMover = stickman.Mover;
             }
             else
             {
-                Debug.LogError($"На префабе {stickmanPrefab.name} отсутствует StickmanMover", stickman);
+                Debug.LogError($"На префабе {stickmanPrefab.name} отсутствует компонент Stickman", stickmanObject);
             }
 
             _spawnedCount++;
@@ -85,7 +76,7 @@ public class StickmenSpawner : MonoBehaviour, ISpawner<StickmanSpawnData>
         var route = new List<Vector3> { spawnPoint.position };
         route.AddRange(pathWaypoints.Select(w => w.position));
         route.AddRange(queueWaypoints.Select(w => w.position));
-        
+
         return route;
     }
 
@@ -94,7 +85,7 @@ public class StickmenSpawner : MonoBehaviour, ISpawner<StickmanSpawnData>
         var corridor = new List<Vector3> { spawnPoint.position };
         corridor.AddRange(pathWaypoints.Select(w => w.position));
         corridor.Add(queueWaypoints[0].position);
-        
+
         return _stickmanPath.GetTotalLength(corridor);
     }
 }
