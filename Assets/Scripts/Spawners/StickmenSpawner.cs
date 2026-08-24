@@ -3,12 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public struct StickmanSpawnData
-{
-    public StickmanColor Color;
-    public int Count;
-}
-
 public class StickmenSpawner : MonoBehaviour, ISpawner<StickmanSpawnData>
 {
     [SerializeField] private GameObject stickmanPrefab;
@@ -21,7 +15,7 @@ public class StickmenSpawner : MonoBehaviour, ISpawner<StickmanSpawnData>
     private WaitForSeconds _waitForSeconds;
     private int _spawnedCount;
 
-    private StickmanPath _stickmanPath;
+    private RoutePath routePath;
     private StickmanMover _lastSpawnedMover;
     private List<Vector3> _route;
     
@@ -32,13 +26,13 @@ public class StickmenSpawner : MonoBehaviour, ISpawner<StickmanSpawnData>
     private void Awake()
     {
         _waitForSeconds = new WaitForSeconds(spawnInterval);
-        _stickmanPath = new StickmanPath();
+        routePath = new RoutePath();
 
         _route = BuildRoute();
-        _routeTotalLength = _stickmanPath.GetTotalLength(_route);
+        _routeTotalLength = routePath.GetTotalLength(_route);
 
         _queueStartDistance = CalculateQueueStartDistance();
-        _queueTotalLength = _stickmanPath.GetTotalLength(queueWaypoints.Select(w => w.position).ToList());
+        _queueTotalLength = routePath.GetTotalLength(queueWaypoints.Select(w => w.position).ToList());
     }
 
     public IEnumerator Spawn(StickmanSpawnData data)
@@ -86,6 +80,6 @@ public class StickmenSpawner : MonoBehaviour, ISpawner<StickmanSpawnData>
         corridor.AddRange(pathWaypoints.Select(w => w.position));
         corridor.Add(queueWaypoints[0].position);
 
-        return _stickmanPath.GetTotalLength(corridor);
+        return routePath.GetTotalLength(corridor);
     }
 }

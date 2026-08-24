@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StickmanPath 
+public class RoutePath 
 {
     public float GetTotalLength(IReadOnlyList<Vector3> points)
     {

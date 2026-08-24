@@ -7,7 +7,7 @@ public class StickmanMover : MonoBehaviour
     
     [SerializeField] private float moveSpeed = 5f;
 
-    private readonly StickmanPath _pathCalculator = new StickmanPath();
+    private readonly RoutePath _pathCalculator = new RoutePath();
 
     private IReadOnlyList<Vector3> _route;
     private StickmanMover _leader;
