@@ -1,3 +1,6 @@
+using System;
+
+[Serializable]
 public struct BusRequest
 {
     public StickmanColor Color;

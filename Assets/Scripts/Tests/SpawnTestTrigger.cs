@@ -1,20 +1,25 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SpawnTestTrigger : MonoBehaviour
 {
-    [SerializeField] private StickmenSpawner spawner;
+    [SerializeField] private StickmenSpawner _spawner;
+    [SerializeField] private BusSpawner _busSpawner;
     [SerializeField] private QueueStickmenCounter _queueStickmenCounter;
-    [SerializeField] private StickmanColor testColor = StickmanColor.Red;
-    [SerializeField] private int testCount = 6;
+    [SerializeField] private List<BusRequest> _testBusRequests;
+    [SerializeField] private StickmanColor _testColor = StickmanColor.Red;
+    [SerializeField] private int _testCount = 6;
 
     private void Start()
     {
-        _queueStickmenCounter.SetInitialCount(testCount)
+        _queueStickmenCounter.SetInitialCount(_testCount)
             ;
-        StartCoroutine(spawner.Spawn(new StickmanSpawnData
+        StartCoroutine(_spawner.Spawn(new StickmanSpawnData
         {
-            Color = testColor,
-            Count = testCount
+            Color = _testColor,
+            Count = _testCount
         }));
+        
+        _busSpawner.FillInitial(_testBusRequests);
     }
 }
