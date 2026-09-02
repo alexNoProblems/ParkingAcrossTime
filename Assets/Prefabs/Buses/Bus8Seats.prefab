@@ -161,7 +161,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cf34621bbe724ee4a7f0b6043134286, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 4
+  moveSpeed: 6
 --- !u!114 &7054879101554029772
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -199,8 +199,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9016bfa162b7043ab86753139d859908, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetRenderer: {fileID: 3557656462125408759}
-  materialIndex: 0
+  _targets:
+  - Renderer: {fileID: 3557656462125408759}
+    MaterialIndex: 1
+  - Renderer: {fileID: 7679944660906557524}
+    MaterialIndex: 0
 --- !u!114 &2356512255238457349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -213,7 +216,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03cefac54b9804bfb8144abea68e2b71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 4
+  moveSpeed: 7
   modelForwardOffsetY: 0
 --- !u!65 &4580263569742651626
 BoxCollider:
@@ -234,5 +237,10 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 2.6236496, y: 2.861862, z: 7.9971595}
+  m_Center: {x: 0.0030431896, y: 1.6839311, z: -0.057359785}
+--- !u!23 &7679944660906557524 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -4683669308469848369, guid: 30c770b98d27248e0a7ebc9262da90b2, type: 3}
+  m_PrefabInstance: {fileID: 6166808252106348187}
+  m_PrefabAsset: {fileID: 0}

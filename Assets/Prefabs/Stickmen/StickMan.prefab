@@ -749,8 +749,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9016bfa162b7043ab86753139d859908, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetRenderer: {fileID: 4528812574583756579}
-  materialIndex: 0
+  _targets:
+  - Renderer: {fileID: 4528812574583756579}
+    MaterialIndex: 0
 --- !u!114 &7983147386771011367
 MonoBehaviour:
   m_ObjectHideFlags: 0
