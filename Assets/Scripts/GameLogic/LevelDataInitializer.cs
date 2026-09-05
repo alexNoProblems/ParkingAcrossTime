@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LevelDataInitializer : MonoBehaviour
 {
-    [SerializeField] private int currentLevel = 1;
+    [SerializeField] private int _currentLevel = 1;
     [SerializeField] private StickmenSpawner _stickmenSpawner;
     [SerializeField] private BusSpawner _busSpawner;
     [SerializeField] private QueueStickmenCounter _queueStickmenCounter;
@@ -22,7 +22,7 @@ public class LevelDataInitializer : MonoBehaviour
     private void Start()
     {
         Dictionary<StickmanColor, StickmenLevelDataGenerator.LevelColorData> levelData =
-            _stickmenLevelDataGenerator.GenerateLevelData(currentLevel);
+            _stickmenLevelDataGenerator.GenerateLevelData(_currentLevel);
  
         int totalStickmen = 0;
         var busRequests = new List<BusRequest>();

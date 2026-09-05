@@ -4,7 +4,7 @@ public class BusMover : MonoBehaviour
 {
     private const float MinMovementSqrMagnitude = 0.0001f;
 
-    [SerializeField] private float moveSpeed = 4f;
+    [SerializeField] private float _moveSpeed = 4f;
     
     private Vector3 _targetPosition;
     private bool _isMoving;
@@ -20,7 +20,7 @@ public class BusMover : MonoBehaviour
             return;
         }
 
-        Vector3 newPosition = Vector3.MoveTowards(transform.position, _targetPosition, moveSpeed * Time.deltaTime);
+        Vector3 newPosition = Vector3.MoveTowards(transform.position, _targetPosition, _moveSpeed * Time.deltaTime);
 
         if (newPosition == transform.position)
         {
@@ -44,6 +44,11 @@ public class BusMover : MonoBehaviour
     public void StartMoving()
     {
         _isMoving = true;
+    }
+
+    public void StopMoving()
+    {
+        _isMoving = false;
     }
 
     public void SetTarget(Vector3 targetPosition)

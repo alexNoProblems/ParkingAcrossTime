@@ -7,7 +7,6 @@ public class StickmenLevelProgression
     private const int StartStickmen = 24;
     private const int MaxStickmen = 390;
 
-
     public int GetStickmenCount(int level)
     {
         if (level <= 1)

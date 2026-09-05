@@ -2525,11 +2525,23 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1842375437}
     - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
+      propertyPath: _spawnPoint
+      value: 
+      objectReference: {fileID: 1842375437}
+    - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
       propertyPath: spawnInterval
       value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
+      propertyPath: _spawnInterval
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
       propertyPath: stickmanPrefab
+      value: 
+      objectReference: {fileID: 7190392360658972332, guid: 8fba94173e2a97041a18861de4fdcc9c, type: 3}
+    - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
+      propertyPath: _stickmanPrefab
       value: 
       objectReference: {fileID: 7190392360658972332, guid: 8fba94173e2a97041a18861de4fdcc9c, type: 3}
     - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
@@ -2537,11 +2549,23 @@ PrefabInstance:
       value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
+      propertyPath: _queueSlotSpacing
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
       propertyPath: pathWaypoints.Array.size
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
+      propertyPath: _pathWaypoints.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
       propertyPath: queueWaypoints.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
+      propertyPath: _queueWaypoints.Array.size
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
@@ -2565,6 +2589,22 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 285349205}
     - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
+      propertyPath: _pathWaypoints.Array.data[0]
+      value: 
+      objectReference: {fileID: 1828285299}
+    - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
+      propertyPath: _pathWaypoints.Array.data[1]
+      value: 
+      objectReference: {fileID: 1946527394}
+    - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
+      propertyPath: _pathWaypoints.Array.data[2]
+      value: 
+      objectReference: {fileID: 1779918288}
+    - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
+      propertyPath: _pathWaypoints.Array.data[3]
+      value: 
+      objectReference: {fileID: 1325191094}
+    - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
       propertyPath: queueWaypoints.Array.data[0]
       value: 
       objectReference: {fileID: 285349205}
@@ -2578,6 +2618,22 @@ PrefabInstance:
       objectReference: {fileID: 1535728618}
     - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
       propertyPath: queueWaypoints.Array.data[3]
+      value: 
+      objectReference: {fileID: 1536922150}
+    - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
+      propertyPath: _queueWaypoints.Array.data[0]
+      value: 
+      objectReference: {fileID: 285349205}
+    - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
+      propertyPath: _queueWaypoints.Array.data[1]
+      value: 
+      objectReference: {fileID: 230673850}
+    - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
+      propertyPath: _queueWaypoints.Array.data[2]
+      value: 
+      objectReference: {fileID: 1535728618}
+    - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
+      propertyPath: _queueWaypoints.Array.data[3]
       value: 
       objectReference: {fileID: 1536922150}
     - target: {fileID: 8179598741756769098, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
@@ -3211,7 +3267,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c929ca5ec20d342e48247c96363d1ec9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentLevel: 1
+  _currentLevel: 1
   _stickmenSpawner: {fileID: 1031393483}
   _busSpawner: {fileID: 4267845700435680866}
   _queueStickmenCounter: {fileID: 1246559371}
@@ -3404,8 +3460,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 666c6136474eb42c4bf260322c99eb8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetWidth: 6
-  targetHeight: 12
+  _targetWidth: 6
+  _targetHeight: 12
 --- !u!1 &965025736
 GameObject:
   m_ObjectHideFlags: 0
@@ -4347,6 +4403,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1291375663}
   - component: {fileID: 1291375662}
+  - component: {fileID: 1291375664}
   m_Layer: 0
   m_Name: BusClickController
   m_TagString: Untagged
@@ -4367,6 +4424,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _busRoute: {fileID: 1391122059}
+  _busPatrolManager: {fileID: 1291375664}
   _camera: {fileID: 963194227}
 --- !u!4 &1291375663
 Transform:
@@ -4383,6 +4441,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1291375664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1291375661}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50d7ac7250fdf4966b450fc50668aa77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxCurrentPatrols: 3
 --- !u!1 &1325191093
 GameObject:
   m_ObjectHideFlags: 0

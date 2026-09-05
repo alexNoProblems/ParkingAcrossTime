@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 public class BusClickController : MonoBehaviour
 {
    [SerializeField] private BusRoute _busRoute;
+   [SerializeField] private BusPatrolManager _busPatrolManager;
    [SerializeField] private Camera _camera;
 
    private void Update()
@@ -12,23 +13,41 @@ public class BusClickController : MonoBehaviour
          return;
       
       if (Pointer.current.press.wasPressedThisFrame)
-         TryStartPatrol(Pointer.current.position.ReadValue());
+         TryHandleClick(Pointer.current.position.ReadValue());
    }
 
-   private void TryStartPatrol(Vector2 screenPosition)
+   private void TryHandleClick(Vector2 screenPosition)
    {
       Ray ray = _camera.ScreenPointToRay(screenPosition);
       RaycastHit[] hits = Physics.RaycastAll(ray);
 
       foreach (RaycastHit hit in hits)
       {
-         if(!hit.collider.TryGetComponent<Bus>(out _))
+         if(!hit.collider.TryGetComponent<Bus>(out var bus))
             continue;
 
-         if (hit.collider.TryGetComponent<BusRoutePatrol>(out var busRoutePatrol))
-            busRoutePatrol.StartPatrolling(_busRoute);
+         HandleBusClicked(bus);
          
          return;
       }
+   }
+
+   private void HandleBusClicked(Bus bus)
+   {
+      if (bus.Lane == null || !bus.Lane.IsFront(bus))
+         return;
+
+      if (!_busPatrolManager.HasFreeSlot)
+         return;
+
+      Bus realeasedBus = bus.Lane.ReleaseFront();
+      
+      if (realeasedBus == null)
+         return;
+      
+      realeasedBus.Mover.StopMoving();
+
+      if (realeasedBus.TryGetComponent<BusRoutePatrol>(out var busRoutePatrol))
+         busRoutePatrol.StartPatrolling(_busRoute, _busPatrolManager);
    }
 }

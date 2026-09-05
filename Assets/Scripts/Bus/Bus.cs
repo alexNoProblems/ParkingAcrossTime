@@ -11,6 +11,7 @@ public class Bus : MonoBehaviour
    
    public BusMover Mover => _mover;
    public BusCapacity Capacity => _capacity;
+   public BusLane Lane { get ; private set; }
 
    private void Awake()
    {
@@ -23,5 +24,10 @@ public class Bus : MonoBehaviour
       _colorSetter.SetColor(request.Color);
       _capacity.Initialize(request.Capacity);
       _mover.Initialize(startPosition, targetPosition);
+   }
+
+   public void SetLane(BusLane lane)
+   {
+      Lane = lane;
    }
 }

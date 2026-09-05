@@ -29,6 +29,26 @@ public class BusLane : MonoBehaviour
         SpawnBus(request, slotPosition, slotPosition, startMoving: false);
     }
 
+    public bool IsFront(Bus bus)
+    {
+        return _busesInLane.Count > 0 && _busesInLane[0] == bus;
+    }
+
+    public Bus ReleaseFront()
+    {
+        if (_busesInLane.Count == 0)
+            return null;
+        
+        Bus frontBus = _busesInLane[0];
+        _busesInLane.RemoveAt(0);
+        frontBus.SetLane(null);
+        
+        ShiftBusesForward();
+        TrySpawnNext();
+        
+        return frontBus;
+    }
+
     public void Enqueue(BusRequest request)
     {
         _pendingRequests.Enqueue(request);
@@ -38,17 +58,12 @@ public class BusLane : MonoBehaviour
 
     public void DepartFront()
     {
-        if (_busesInLane.Count == 0)
+        Bus bus = ReleaseFront();
+        
+        if (bus == null)
             return;
-
-        Bus frontBus = _busesInLane[0];
-        _busesInLane.RemoveAt(0);
-
-        // TODO: отправить frontBus по маршруту выезда со сцены, а не удалять сразу
-        Destroy(frontBus.gameObject);
-
-        ShiftBusesForward();
-        TrySpawnNext();
+        
+        Destroy(bus.gameObject);
     }
 
     private void TrySpawnNext()
@@ -67,6 +82,7 @@ public class BusLane : MonoBehaviour
         Bus bus = Instantiate(prefab, startPosition, _spawnPoint.rotation);
 
         bus.Initialize(request, startPosition, targetPosition);
+        bus.SetLane(this);
 
         if (startMoving)
             bus.Mover.StartMoving();

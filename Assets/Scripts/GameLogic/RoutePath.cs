@@ -42,4 +42,29 @@ public class RoutePath
         
         return points[points.Count - 1];
     }
+
+    public Vector3 GetDirectionAtDistance(IReadOnlyList<Vector3> points, float distance)
+    {
+        if (points.Count < 2)
+            return Vector3.zero;
+ 
+        float traveled = 0f;
+ 
+        for (int i = 0; i < points.Count - 1; i++)
+        {
+            Vector3 segmentStart = points[i];
+            Vector3 segmentEnd = points[i + 1];
+            float segmentLength = Vector3.Distance(segmentStart, segmentEnd);
+ 
+            if (traveled + segmentLength >= distance || i == points.Count - 2)
+            {
+                return segmentLength > 0f ? (segmentEnd - segmentStart) / segmentLength
+                    : Vector3.zero;
+            }
+ 
+            traveled += segmentLength;
+        }
+ 
+        return Vector3.zero;
+    }
 }

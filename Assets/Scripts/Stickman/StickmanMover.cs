@@ -5,7 +5,7 @@ public class StickmanMover : MonoBehaviour
 {
     private const float MinMovementSqrMagnitude = 0.0001f;
     
-    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float _moveSpeed = 5f;
 
     private readonly RoutePath _pathCalculator = new RoutePath();
 
@@ -63,7 +63,7 @@ public class StickmanMover : MonoBehaviour
         if (_leader != null)
             allowedDistance = Mathf.Min(allowedDistance, _leader.CurrentDistance - _minSpacing);
         
-        return Mathf.Min(CurrentDistance + moveSpeed * Time.deltaTime, allowedDistance);
+        return Mathf.Min(CurrentDistance + _moveSpeed * Time.deltaTime, allowedDistance);
     }
 
     private void MoveTo(float distance)

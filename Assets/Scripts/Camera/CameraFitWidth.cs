@@ -6,40 +6,40 @@ public class CameraFitWidth : MonoBehaviour
 {
     private const float HalfToFullMultiplier = 2f;
     
-    public float targetWidth = 6f;
-    public float targetHeight = 12f;
+    public float _targetWidth = 6f;
+    public float _targetHeight = 12f;
     
-    private Camera camera;
-    private int lastScreenWidth;
-    private int lastScreenHeight;
+    private Camera _camera;
+    private int _lastScreenWidth;
+    private int _lastScreenHeight;
  
     private void Awake()
     {
-        camera = GetComponent<Camera>();
+        _camera = GetComponent<Camera>();
         ApplyFit();
     }
  
     private void Update()
     {
-        if (Screen.width != lastScreenWidth || Screen.height != lastScreenHeight)
+        if (Screen.width != _lastScreenWidth || Screen.height != _lastScreenHeight)
             ApplyFit();
     }
  
     private void ApplyFit()
     {
-        if (camera == null) 
-            camera = GetComponent<Camera>();
+        if (_camera == null) 
+            _camera = GetComponent<Camera>();
         
-        if (camera == null || !camera.orthographic) 
+        if (_camera == null || !_camera.orthographic) 
             return;
  
-        lastScreenWidth = Screen.width;
-        lastScreenHeight = Screen.height;
+        _lastScreenWidth = Screen.width;
+        _lastScreenHeight = Screen.height;
  
-        float aspect = camera.aspect;
-        float sizeForWidth = targetWidth / (HalfToFullMultiplier * aspect);
-        float sizeForHeight = targetHeight / HalfToFullMultiplier;
+        float aspect = _camera.aspect;
+        float sizeForWidth = _targetWidth / (HalfToFullMultiplier * aspect);
+        float sizeForHeight = _targetHeight / HalfToFullMultiplier;
         
-        camera.orthographicSize = Mathf.Max(sizeForWidth, sizeForHeight);
+        _camera.orthographicSize = Mathf.Max(sizeForWidth, sizeForHeight);
     }
 }
