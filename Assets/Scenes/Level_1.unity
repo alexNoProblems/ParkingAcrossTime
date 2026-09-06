@@ -4453,7 +4453,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50d7ac7250fdf4966b450fc50668aa77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxCurrentPatrols: 3
+  _maxConcurrentPatrols: 3
+  _moveSpeed: 7
+  _minSpacing: 2
 --- !u!1 &1325191093
 GameObject:
   m_ObjectHideFlags: 0

@@ -47,7 +47,6 @@ public class BusClickController : MonoBehaviour
       
       realeasedBus.Mover.StopMoving();
 
-      if (realeasedBus.TryGetComponent<BusRoutePatrol>(out var busRoutePatrol))
-         busRoutePatrol.StartPatrolling(_busRoute, _busPatrolManager);
+      _busPatrolManager.StartPatrolling(realeasedBus, _busRoute);
    }
 }

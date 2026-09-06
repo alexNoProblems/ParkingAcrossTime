@@ -4,19 +4,43 @@ using UnityEngine;
 public class BusPatrolManager : MonoBehaviour
 {
     [SerializeField] private int _maxConcurrentPatrols = 3;
+    [SerializeField] private float _moveSpeed = 4f;
+    [SerializeField] private float _minSpacing = 2f;
  
-    private readonly List<BusRoutePatrol> _activePatrols = new List<BusRoutePatrol>();
+    private readonly List<BusPatrolState> _activePatrols = new List<BusPatrolState>();
  
     public bool HasFreeSlot => _activePatrols.Count < _maxConcurrentPatrols;
- 
-    public void BusRegister(BusRoutePatrol patrol)
+
+    private void Update()
     {
-        if (!_activePatrols.Contains(patrol))
-            _activePatrols.Add(patrol);
+        foreach (BusPatrolState patrol in _activePatrols)
+        {
+            if (!patrol.IsActive)
+                continue;
+
+            if (patrol.IsBlockedAhead(_activePatrols, _minSpacing))
+                continue;
+                
+            patrol.Tick(Time.deltaTime);
+        }
     }
- 
-    public void BusUnregister(BusRoutePatrol patrol)
+
+    public void StartPatrolling(Bus bus, BusRoute route)
     {
-        _activePatrols.Remove(patrol);
+        var state = new BusPatrolState(bus, _moveSpeed, bus.ModelForwardOffsetY);
+        state.BeginPatrol(route);
+        
+        _activePatrols.Add(state);
+    }
+
+    public void StopPatrolling(Bus bus)
+    {
+        BusPatrolState state = _activePatrols.Find(patrol => patrol.Bus == bus);
+        
+        if (state == null)
+            return;
+        
+        state.EndPatrol();
+        _activePatrols.Remove(state);
     }
 }

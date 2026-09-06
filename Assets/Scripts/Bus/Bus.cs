@@ -5,6 +5,7 @@ using UnityEngine;
 public class Bus : MonoBehaviour
 {
    [SerializeField] private ColorSetter _colorSetter;
+   [SerializeField] private float _modelForwardOffsetY;
    
    private BusMover _mover;
    private BusCapacity _capacity;
@@ -12,6 +13,7 @@ public class Bus : MonoBehaviour
    public BusMover Mover => _mover;
    public BusCapacity Capacity => _capacity;
    public BusLane Lane { get ; private set; }
+   public float ModelForwardOffsetY => _modelForwardOffsetY;
 
    private void Awake()
    {
