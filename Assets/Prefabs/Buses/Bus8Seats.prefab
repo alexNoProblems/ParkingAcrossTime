@@ -217,6 +217,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _moveSpeed: 7
+  _minSpacing: 2
   _modelForwardOffsetY: 0
 --- !u!65 &4580263569742651626
 BoxCollider:
