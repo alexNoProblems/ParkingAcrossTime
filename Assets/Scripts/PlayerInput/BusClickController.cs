@@ -6,6 +6,8 @@ public class BusClickController : MonoBehaviour
    [SerializeField] private BusRoute _busRoute;
    [SerializeField] private BusPatrolManager _busPatrolManager;
    [SerializeField] private Camera _camera;
+   [SerializeField] private AudioSource _feedbackAudioSource;
+   [SerializeField] private AudioClip _wrongSelectionClip;
 
    private void Update()
    {
@@ -34,19 +36,38 @@ public class BusClickController : MonoBehaviour
 
    private void HandleBusClicked(Bus bus)
    {
-      if (bus.Lane == null || !bus.Lane.IsFront(bus))
+      if (bus.Lane != null && !bus.Lane.IsFront(bus))
+      {
+         PlayWrongSelectionFeedback(bus);
+         
+         return;
+      }
+      
+      if (bus.Lane == null)
          return;
 
       if (!_busPatrolManager.HasFreeSlot)
+      {
+         PlayWrongSelectionFeedback(bus);
+         
          return;
-
-      Bus realeasedBus = bus.Lane.ReleaseFront();
+      }
       
-      if (realeasedBus == null)
+      Bus releasedBus = bus.Lane.ReleaseFront();
+      
+      if (releasedBus == null)
          return;
       
-      realeasedBus.Mover.StopMoving();
+      releasedBus.Mover.StopMoving();
+      releasedBus.PlayExhaustEffect();
+      releasedBus.PlayEngineSound();
 
-      _busPatrolManager.StartPatrolling(realeasedBus, _busRoute);
+      _busPatrolManager.StartPatrolling(releasedBus, _busRoute);
+   }
+
+   private void PlayWrongSelectionFeedback(Bus bus)
+   {
+      _feedbackAudioSource.PlayOneShot(_wrongSelectionClip);
+      bus.PlayWrongSelectionShake();
    }
 }

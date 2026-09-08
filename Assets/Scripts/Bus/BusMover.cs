@@ -24,6 +24,7 @@ public class BusMover : MonoBehaviour
 
         if (newPosition == transform.position)
         {
+            _isMoving = false;
             IsMoving = false;
             
             return;

@@ -3,11 +3,10 @@ using UnityEngine;
 
 public class StickmanMover : MonoBehaviour
 {
-    private const float MinMovementSqrMagnitude = 0.0001f;
-    
     [SerializeField] private float _moveSpeed = 5f;
 
     private readonly RoutePath _pathCalculator = new RoutePath();
+    private readonly MovementRotator _rotator = new MovementRotator();
 
     private IReadOnlyList<Vector3> _route;
     private StickmanMover _leader;

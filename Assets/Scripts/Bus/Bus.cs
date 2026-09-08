@@ -1,7 +1,7 @@
-using System;
 using UnityEngine;
 
-[RequireComponent(typeof(BusMover), typeof(BusCapacity))]
+[RequireComponent(typeof(BusMover), typeof(BusCapacity),  typeof(BusExhaustEffect))]
+[RequireComponent(typeof(AudioSource), typeof(BusShakeEffect))]
 public class Bus : MonoBehaviour
 {
    [SerializeField] private ColorSetter _colorSetter;
@@ -9,6 +9,9 @@ public class Bus : MonoBehaviour
    
    private BusMover _mover;
    private BusCapacity _capacity;
+   private BusExhaustEffect _exhaustEffect;
+   private AudioSource _engineAudioSource;
+   private BusShakeEffect _shakeEffect;
    
    public BusMover Mover => _mover;
    public BusCapacity Capacity => _capacity;
@@ -19,6 +22,9 @@ public class Bus : MonoBehaviour
    {
       _mover = GetComponent<BusMover>();
       _capacity = GetComponent<BusCapacity>();
+      _exhaustEffect = GetComponent<BusExhaustEffect>();
+      _engineAudioSource = GetComponent<AudioSource>();
+      _shakeEffect = GetComponent<BusShakeEffect>();
    }
 
    public void Initialize(BusRequest request, Vector3 startPosition, Vector3 targetPosition)
@@ -32,4 +38,20 @@ public class Bus : MonoBehaviour
    {
       Lane = lane;
    }
+
+   public void PlayExhaustEffect()
+   {
+      _exhaustEffect.PlayPuff();
+   }
+
+   public void PlayEngineSound()
+   {
+      _engineAudioSource.Play();
+   }
+
+   public void PlayWrongSelectionShake()
+   {
+      _shakeEffect.Shake();
+   }
+      
 }
