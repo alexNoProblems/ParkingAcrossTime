@@ -18,20 +18,6 @@ public class StickmanMover : MonoBehaviour
     public float CurrentDistance { get; private set; }
     public bool IsMoving { get; private set; }
 
-    public void Initialize(IReadOnlyList<Vector3> route, StickmanMover leader, float minSpacing, float maxDistance)
-    {
-        _route = route;
-        _leader = leader;
-        _minSpacing = minSpacing;
-        _maxDistance = maxDistance;
-        CurrentDistance = 0f;
-    }
-
-    public void StartMoving()
-    {
-        _isMoving = true;
-    }
-
     private void Update()
     {
         if (!_isMoving || _route == null)
@@ -54,6 +40,33 @@ public class StickmanMover : MonoBehaviour
         
         IsMoving = true;
     }
+    
+    public void Initialize(IReadOnlyList<Vector3> route, StickmanMover leader, float minSpacing, float maxDistance)
+    {
+        _route = route;
+        _leader = leader;
+        _minSpacing = minSpacing;
+        _maxDistance = maxDistance;
+        CurrentDistance = 0f;
+    }
+
+    public void StartMoving()
+    {
+        _isMoving = true;
+    }
+
+    public void SetLeader(StickmanMover leader)
+    {
+        _leader = leader;
+    }
+
+    public void LeaveQueue()
+    {
+        _isMoving = false;
+        _route = null;
+        _leader = null;
+        IsMoving = false;
+    }
 
     private float CalculateDesiredDistance()
     {
@@ -70,17 +83,8 @@ public class StickmanMover : MonoBehaviour
         CurrentDistance = distance;
         Vector3 newPosition = _pathCalculator.GetPointAtDistance(_route, CurrentDistance);
         
-        RotateTowards(newPosition);
+        _rotator.RotateTowards(transform, newPosition);
         
         transform.position = newPosition;
-    }
-
-    private void RotateTowards(Vector3 newPosition)
-    {
-        Vector3 movementDirection = newPosition - transform.position;
-        movementDirection.y = 0f;
-        
-        if (movementDirection.sqrMagnitude >= MinMovementSqrMagnitude)
-            transform.rotation = Quaternion.LookRotation(movementDirection,  Vector3.up);
     }
 }

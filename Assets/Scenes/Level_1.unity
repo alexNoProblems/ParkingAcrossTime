@@ -4393,6 +4393,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4826434980017800227, guid: e0305801f64084c38b538d8eaa865fd1, type: 3}
   m_PrefabInstance: {fileID: 1269068707}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1281317465
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1281317466}
+  m_Layer: 0
+  m_Name: BoardingPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1281317466
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1281317465}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.3, y: 0, z: 3.85}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1391122058}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1291375661
 GameObject:
   m_ObjectHideFlags: 0
@@ -4404,6 +4435,7 @@ GameObject:
   - component: {fileID: 1291375663}
   - component: {fileID: 1291375662}
   - component: {fileID: 1291375664}
+  - component: {fileID: 1291375666}
   - component: {fileID: 1291375665}
   m_Layer: 0
   m_Name: BusClickController
@@ -4424,7 +4456,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ecdd19d1a77e4ea99270cfd76a4d8ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _busRoute: {fileID: 1391122059}
+  _busBoarding: {fileID: 1291375666}
   _busPatrolManager: {fileID: 1291375664}
   _camera: {fileID: 963194227}
   _feedbackAudioSource: {fileID: 1291375665}
@@ -4555,6 +4587,22 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1291375666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1291375661}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 521ed9e51ce4c432b8cbda555e28b65e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _boardingPoint: {fileID: 1281317466}
+  _queue: {fileID: 1547663147}
+  _busRoute: {fileID: 1391122059}
+  _patrolManager: {fileID: 1291375664}
 --- !u!1 &1325191093
 GameObject:
   m_ObjectHideFlags: 0
@@ -4782,6 +4830,7 @@ Transform:
   - {fileID: 445262440}
   - {fileID: 1535931676}
   - {fileID: 1452086687}
+  - {fileID: 1281317466}
   - {fileID: 1381490628}
   - {fileID: 987722511}
   - {fileID: 1715299875}
@@ -5171,6 +5220,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1547663146}
+  - component: {fileID: 1547663147}
   m_Layer: 0
   m_Name: Queue
   m_TagString: Untagged
@@ -5197,6 +5247,18 @@ Transform:
   - {fileID: 1536922150}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1547663147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1547663145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76c075672e17248c0a25eb5d46f54c43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1576282403
 GameObject:
   m_ObjectHideFlags: 0

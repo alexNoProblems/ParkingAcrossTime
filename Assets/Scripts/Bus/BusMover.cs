@@ -8,8 +8,10 @@ public class BusMover : MonoBehaviour
     
     private Vector3 _targetPosition;
     private bool _isMoving;
+    private WaitUntil _stoppedWait;
     
     public bool IsMoving { get; private set; }
+    public WaitUntil StoppedWait => _stoppedWait ??= new WaitUntil(() => !IsMoving);
 
     private void Update()
     {

@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class BusClickController : MonoBehaviour
 {
-   [SerializeField] private BusRoute _busRoute;
+   [SerializeField] private BusBoarding _busBoarding;
    [SerializeField] private BusPatrolManager _busPatrolManager;
    [SerializeField] private Camera _camera;
    [SerializeField] private AudioSource _feedbackAudioSource;
@@ -59,10 +59,8 @@ public class BusClickController : MonoBehaviour
          return;
       
       releasedBus.Mover.StopMoving();
-      releasedBus.PlayExhaustEffect();
-      releasedBus.PlayEngineSound();
 
-      _busPatrolManager.StartPatrolling(releasedBus, _busRoute);
+      _busBoarding.HandleReleasedBus(releasedBus);
    }
 
    private void PlayWrongSelectionFeedback(Bus bus)
