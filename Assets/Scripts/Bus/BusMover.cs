@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BusMover : MonoBehaviour
@@ -6,7 +7,10 @@ public class BusMover : MonoBehaviour
 
     [SerializeField] private float _moveSpeed = 4f;
     
+    private readonly MovementRotator _rotator = new MovementRotator();
+    
     private Vector3 _targetPosition;
+    private Queue<Vector3> _pathQueue;
     private bool _isMoving;
     private WaitUntil _stoppedWait;
     
@@ -26,13 +30,20 @@ public class BusMover : MonoBehaviour
 
         if (newPosition == transform.position)
         {
+            if (_pathQueue != null && _pathQueue.Count > 0)
+            {
+                _targetPosition = _pathQueue.Dequeue();
+
+                return;
+            }
+            
             _isMoving = false;
             IsMoving = false;
             
             return;
         }
         
-        RotateTowards(newPosition);
+        _rotator.RotateTowards(transform, newPosition);
         
         transform.position = newPosition;
         IsMoving = true;
@@ -60,12 +71,13 @@ public class BusMover : MonoBehaviour
         _isMoving = true;
     }
 
-    private void RotateTowards(Vector3 newPosition)
+    public void SetPath(IReadOnlyList<Vector3> waypoints)
     {
-        Vector3 direction = newPosition - transform.position;
-        direction.y = 0f;
-
-        if (direction.sqrMagnitude >= MinMovementSqrMagnitude)
-            transform.rotation = Quaternion.LookRotation(direction,  Vector3.up);
+        if (waypoints == null || waypoints.Count == 0)
+            return;
+        
+        _pathQueue = new Queue<Vector3>(waypoints);
+        _targetPosition = _pathQueue.Dequeue();
+        _isMoving = true;
     }
 }

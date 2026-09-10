@@ -6,10 +6,17 @@ public class MovementRotator
 
     public void RotateTowards(Transform target, Vector3 newPosition)
     {
-        Vector3 direction = newPosition - target.position;
+        RotateInDirection(target, newPosition - target.position, Quaternion.identity);
+    }
+
+    public void RotateInDirection(Transform target, Vector3 direction, Quaternion offset)
+    {
         direction.y = 0f;
         
-        if (direction.sqrMagnitude >= MinMovementSqrMagnitude)
-            target.rotation = Quaternion.LookRotation(direction, Vector3.up);
+        if(direction.sqrMagnitude < MinMovementSqrMagnitude)
+            return;
+        
+        Quaternion lookRotation = Quaternion.LookRotation(direction, Vector3.up);
+        target.rotation = lookRotation *  offset;
     }
 }

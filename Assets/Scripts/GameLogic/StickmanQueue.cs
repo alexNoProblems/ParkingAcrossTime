@@ -4,6 +4,13 @@ using UnityEngine;
 public class StickmanQueue : MonoBehaviour
 {
    private readonly List<Stickman> _stickmen = new List<Stickman>();
+
+   private float _frontMaxDistance;
+
+   public void Initialize(float frontMaxDistance)
+   {
+      _frontMaxDistance = frontMaxDistance;
+   }
    
    public void Register(Stickman stickman)
    {
@@ -25,7 +32,7 @@ public class StickmanQueue : MonoBehaviour
 
       if (_stickmen.Count > 0)
       
-         _stickmen[0].Mover.SetLeader(null);
+         _stickmen[0].Mover.PromoteToFront(_frontMaxDistance);
    
       return front;
    }

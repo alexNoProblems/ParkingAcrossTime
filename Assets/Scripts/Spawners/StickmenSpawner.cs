@@ -7,6 +7,7 @@ public class StickmenSpawner : MonoBehaviour, ISpawner<StickmanSpawnData>
 {
     [SerializeField] private GameObject _stickmanPrefab;
     [SerializeField] private Transform _spawnPoint;
+    [SerializeField] private StickmanQueue _stickmanQueue;
     [SerializeField] private List<Transform> _pathWaypoints;
     [SerializeField] private List<Transform> _queueWaypoints;
     [SerializeField] private float _queueSlotSpacing = 1f;
@@ -33,6 +34,7 @@ public class StickmenSpawner : MonoBehaviour, ISpawner<StickmanSpawnData>
 
         _queueStartDistance = CalculateQueueStartDistance();
         _queueTotalLength = routePath.GetTotalLength(_queueWaypoints.Select(w => w.position).ToList());
+        _stickmanQueue.Initialize(_queueStartDistance);
     }
 
     public IEnumerator Spawn(StickmanSpawnData data)
@@ -53,6 +55,7 @@ public class StickmenSpawner : MonoBehaviour, ISpawner<StickmanSpawnData>
                 stickman.Initialize(data.Color, _route, _lastSpawnedMover, _queueSlotSpacing, maxDistance);
 
                 _lastSpawnedMover = stickman.Mover;
+                _stickmanQueue.Register(stickman);
             }
             else
             {

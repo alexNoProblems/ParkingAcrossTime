@@ -2537,6 +2537,10 @@ PrefabInstance:
       value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
+      propertyPath: _stickmanQueue
+      value: 
+      objectReference: {fileID: 1547663147}
+    - target: {fileID: 6888551489545931535, guid: 449c52b8361314e98aa671b0b5c936ed, type: 3}
       propertyPath: stickmanPrefab
       value: 
       objectReference: {fileID: 7190392360658972332, guid: 8fba94173e2a97041a18861de4fdcc9c, type: 3}
@@ -3609,7 +3613,7 @@ GameObject:
   m_Component:
   - component: {fileID: 987722511}
   m_Layer: 0
-  m_Name: RouterPoint_5
+  m_Name: RouterPoint_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4599,7 +4603,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 521ed9e51ce4c432b8cbda555e28b65e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _routePoints:
+  - {fileID: 445262440}
+  - {fileID: 1535931676}
+  - {fileID: 1452086687}
+  _exitRoutePoints:
+  - {fileID: 987722511}
+  - {fileID: 445262440}
   _boardingPoint: {fileID: 1281317466}
+  _exitPoint: {fileID: 1715299875}
   _queue: {fileID: 1547663147}
   _busRoute: {fileID: 1391122059}
   _patrolManager: {fileID: 1291375664}
@@ -4766,37 +4778,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4826434980017800227, guid: e0305801f64084c38b538d8eaa865fd1, type: 3}
   m_PrefabInstance: {fileID: 1365312289}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1381490627
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1381490628}
-  m_Layer: 0
-  m_Name: RouterPoint_4
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1381490628
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1381490627}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.36, y: 0, z: 3.85}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1391122058}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1391122057
 GameObject:
   m_ObjectHideFlags: 0
@@ -4831,7 +4812,6 @@ Transform:
   - {fileID: 1535931676}
   - {fileID: 1452086687}
   - {fileID: 1281317466}
-  - {fileID: 1381490628}
   - {fileID: 987722511}
   - {fileID: 1715299875}
   m_Father: {fileID: 0}
@@ -4852,7 +4832,6 @@ MonoBehaviour:
   - {fileID: 445262440}
   - {fileID: 1535931676}
   - {fileID: 1452086687}
-  - {fileID: 1381490628}
   - {fileID: 987722511}
 --- !u!1001 &1409698073
 PrefabInstance:
@@ -5507,7 +5486,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1715299875}
   m_Layer: 0
-  m_Name: RouterPoint_6_exit
+  m_Name: RouterPoint_exit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

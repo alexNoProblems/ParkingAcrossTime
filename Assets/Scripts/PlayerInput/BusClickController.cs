@@ -59,6 +59,8 @@ public class BusClickController : MonoBehaviour
          return;
       
       releasedBus.Mover.StopMoving();
+      releasedBus.PlayExhaustEffect();
+      releasedBus.PlayEngineSound();
 
       _busBoarding.HandleReleasedBus(releasedBus);
    }

@@ -68,6 +68,12 @@ public class StickmanMover : MonoBehaviour
         IsMoving = false;
     }
 
+    public void PromoteToFront(float maxDistance)
+    {
+        _leader = null;
+        _maxDistance = maxDistance;
+    }
+
     private float CalculateDesiredDistance()
     {
         float allowedDistance = _maxDistance;

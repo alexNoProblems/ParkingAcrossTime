@@ -25,10 +25,10 @@ public class BusPatrolManager : MonoBehaviour
         }
     }
 
-    public void StartPatrolling(Bus bus, BusRoute route)
+    public void StartPatrolling(Bus bus, BusRoute route, IReadOnlyList<Vector3> entryWaypoints = null)
     {
         var state = new BusPatrolState(bus, _moveSpeed, bus.ModelForwardOffsetY);
-        state.BeginPatrol(route);
+        state.BeginPatrol(route, entryWaypoints);
         
         _activePatrols.Add(state);
     }

@@ -4,9 +4,10 @@ using UnityEngine;
 public class BusPatrolState
 {
     private const float MinMovementSqrMagnitude = 0.0001f;
- 
+    
     private readonly RoutePath _pathCalculator = new RoutePath();
     private readonly Transform _transform;
+    private readonly MovementRotator _rotator = new MovementRotator();
     private readonly float _moveSpeed;
     private readonly float _modelForwardOffsetY;
  
@@ -28,11 +29,11 @@ public class BusPatrolState
         _modelForwardOffsetY = modelForwardOffsetY;
     }
  
-    public void BeginPatrol(BusRoute route)
+    public void BeginPatrol(BusRoute route, IReadOnlyList<Vector3> entryWaypoints = null)
     {
         var waypoints = new List<Vector3>(route.GetWaypointPositions());
  
-        _entryPath = BuildEntryPath(waypoints);
+        _entryPath = BuildEntryPath(waypoints, entryWaypoints);
         _entryLength = _pathCalculator.GetTotalLength(_entryPath);
  
         _loopRoute = BuildLoopRoute(waypoints);
@@ -107,21 +108,21 @@ public class BusPatrolState
     private void RotateTowards(List<Vector3> route, float distance)
     {
         Vector3 direction = _pathCalculator.GetDirectionAtDistance(route, distance);
-        direction.y = 0f;
- 
-        if (direction.sqrMagnitude < MinMovementSqrMagnitude)
-            return;
- 
-        Quaternion lookRotation = Quaternion.LookRotation(direction, Vector3.up);
-        _transform.rotation = lookRotation * Quaternion.Euler(0f, _modelForwardOffsetY, 0f);
+        Quaternion offset = Quaternion.Euler(0f, _modelForwardOffsetY, 0f);
+        _rotator.RotateInDirection(_transform, direction, offset);
     }
  
-    private List<Vector3> BuildEntryPath(List<Vector3> waypoints)
+    private List<Vector3> BuildEntryPath(List<Vector3> waypoints, IReadOnlyList<Vector3> entryWaypoints)
     {
-        if (waypoints.Count == 0)
-            return new List<Vector3> { _transform.position };
+        var entryPath = new List<Vector3> { _transform.position };
+
+        if (entryWaypoints != null)
+            entryPath.AddRange(entryWaypoints);
+        
+        if (waypoints.Count > 0)
+            entryPath.Add(waypoints[0]);
  
-        return new List<Vector3> { _transform.position, waypoints[0] };
+        return entryPath;
     }
  
     private List<Vector3> BuildLoopRoute(List<Vector3> waypoints)
