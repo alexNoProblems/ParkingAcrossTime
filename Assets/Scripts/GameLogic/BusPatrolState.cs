@@ -15,11 +15,15 @@ public class BusPatrolState
     private List<Vector3> _loopRoute;
     private float _entryLength;
     private float _loopLength;
+    private bool _isBoarding;
+    private bool _hasReachedCheckpointThisPass;
  
     public Bus Bus { get; }
     public float CurrentDistance { get; private set; }
     public bool HasEnteredLoop { get; private set; }
     public bool IsActive { get; private set; }
+    public bool IsBoarding => _isBoarding;
+    public bool HasReachedCheckpointThisPass => _hasReachedCheckpointThisPass;
  
     public BusPatrolState(Bus bus, float moveSpeed, float modelForwardOffsetY)
     {
@@ -47,6 +51,16 @@ public class BusPatrolState
     public void EndPatrol()
     {
         IsActive = false;
+    }
+
+    public void SetIsBoarding(bool isBoarding)
+    {
+        _isBoarding = isBoarding;
+    }
+
+    public void SetReachedCheckpoint(bool reached)
+    {
+        _hasReachedCheckpointThisPass = reached;
     }
  
     public bool IsBlockedAhead(IReadOnlyList<BusPatrolState> allPatrols, float minSpacing)

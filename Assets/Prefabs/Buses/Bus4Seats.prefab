@@ -353,13 +353,10 @@ PrefabInstance:
       addedObject: {fileID: 4825380786589512835}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c29eecb79d0b2489b86253f30c8c9eab, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 934763672782992234}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c29eecb79d0b2489b86253f30c8c9eab, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 5425921845475223305}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c29eecb79d0b2489b86253f30c8c9eab, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3662724494854819113}
+      addedObject: {fileID: 934763672782992234}
   m_SourcePrefab: {fileID: 100100000, guid: c29eecb79d0b2489b86253f30c8c9eab, type: 3}
 --- !u!23 &3032739080589121313 stripped
 MeshRenderer:
@@ -493,6 +490,21 @@ MonoBehaviour:
   - {fileID: 6716200283770972506}
   - {fileID: 3824760652589980882}
   - {fileID: 525814125734052347}
+--- !u!114 &5425921845475223305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9162696651199423039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de785f96f32114af8924a29ab4801731, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _shakeDuration: 0.3
+  _shakeMagnitude: 0.1
+  _shakeCount: 4
 --- !u!82 &934763672782992234
 AudioSource:
   m_ObjectHideFlags: 0
@@ -589,31 +601,3 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &5425921845475223305
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9162696651199423039}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de785f96f32114af8924a29ab4801731, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _shakeDuration: 0.3
-  _shakeMagnitude: 0.1
-  _shakeCount: 4
---- !u!114 &3662724494854819113
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9162696651199423039}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32a71b3dd71af4a92a24f5eba25decc2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _seatsPoints: []

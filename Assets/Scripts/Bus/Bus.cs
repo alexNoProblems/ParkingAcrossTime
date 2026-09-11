@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(BusMover), typeof(BusCapacity),  typeof(BusExhaustEffect))]
-[RequireComponent(typeof(AudioSource), typeof(BusShakeEffect), typeof(BusSeats))]
+[RequireComponent(typeof(AudioSource), typeof(BusShakeEffect))]
 public class Bus : MonoBehaviour
 {
    [SerializeField] private ColorSetter _colorSetter;
@@ -28,7 +28,7 @@ public class Bus : MonoBehaviour
       _exhaustEffect = GetComponent<BusExhaustEffect>();
       _engineAudioSource = GetComponent<AudioSource>();
       _shakeEffect = GetComponent<BusShakeEffect>();
-      _seats = GetComponent<BusSeats>();
+      _seats = GetComponentInChildren<BusSeats>();
    }
 
    public void Initialize(BusRequest request, Vector3 startPosition, Vector3 targetPosition)

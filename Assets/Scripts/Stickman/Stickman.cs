@@ -4,12 +4,19 @@ using UnityEngine;
 
 public class Stickman : MonoBehaviour
 {
+   private const string SeatAnchorName = "SeatAnchor";
+   
    [SerializeField] private StickmanMover _mover;
    [SerializeField] private ColorSetter _colorSetter;
    [SerializeField] private StickmanAnimator _animator;
+   [SerializeField] private Vector3 _seatRotationOffset;
+   [SerializeField] private float _seatScaleMultiplier = 1f;
+   [SerializeField] private Vector3 _seatPositionOffset;
    
    public StickmanMover Mover => _mover;
    public StickmanColor Color { get;  private set; }
+   
+   private readonly ScaleNeutralizer _scaleNeutralizer = new ScaleNeutralizer();
 
    private void Update()
    {
@@ -29,11 +36,14 @@ public class Stickman : MonoBehaviour
    {
       _mover.LeaveQueue();
       _mover.enabled = false;
-      
-      transform.SetParent(seat, false);
-      transform.localEulerAngles = Vector3.zero;
-      transform.localRotation = Quaternion.identity;
-      
+
+      Transform anchor = _scaleNeutralizer.CreateNeutralAnchor(seat, SeatAnchorName);
+
+      transform.SetParent(anchor, false);
+      transform.localPosition = _seatPositionOffset;
+      transform.localRotation = Quaternion.Euler(_seatRotationOffset);
+      transform.localScale = Vector3.one * _seatScaleMultiplier;
+
       _animator.SetRunning(false);
    }
 }

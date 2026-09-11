@@ -724,6 +724,9 @@ MonoBehaviour:
   _mover: {fileID: -2070247212586151134}
   _colorSetter: {fileID: 4770566813636137480}
   _animator: {fileID: 7983147386771011367}
+  _seatRotationOffset: {x: -90, y: 0, z: -90}
+  _seatScaleMultiplier: 0.4
+  _seatPositionOffset: {x: -0.45, y: 0, z: 0}
 --- !u!114 &-2070247212586151134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -736,7 +739,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11b87770596be46ba964521b753ddd9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  _moveSpeed: 8
 --- !u!114 &4770566813636137480
 MonoBehaviour:
   m_ObjectHideFlags: 0

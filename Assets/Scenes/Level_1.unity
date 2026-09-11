@@ -4492,9 +4492,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50d7ac7250fdf4966b450fc50668aa77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _boarding: {fileID: 1291375666}
   _maxConcurrentPatrols: 3
   _moveSpeed: 7
   _minSpacing: 2
+  _boardingCheckpointRadius: 0.3
 --- !u!82 &1291375665
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4615,6 +4617,7 @@ MonoBehaviour:
   _queue: {fileID: 1547663147}
   _busRoute: {fileID: 1391122059}
   _patrolManager: {fileID: 1291375664}
+  _boardingInterval: 0.1
 --- !u!1 &1325191093
 GameObject:
   m_ObjectHideFlags: 0
