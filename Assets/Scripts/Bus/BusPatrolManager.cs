@@ -10,49 +10,87 @@ public class BusPatrolManager : MonoBehaviour
     [SerializeField] private float _minSpacing = 2f;
     [SerializeField] private float _boardingCheckpointRadius = 0.3f;
  
-    private readonly List<BusPatrolState> _activePatrols = new List<BusPatrolState>();
+    private readonly List<IBusMovementState> _activeStates = new List<IBusMovementState>();
+    private int _nextPriorityOrder;
  
-    public bool HasFreeSlot => _activePatrols.Count < _maxConcurrentPatrols;
+    public bool HasFreeSlot => CountActivePatrols() < _maxConcurrentPatrols;
 
     private void Update()
     {
-        for (int i = _activePatrols.Count - 1; i >= 0; i--)
+        for (int i = _activeStates.Count - 1; i >= 0; i--)
         {
-            BusPatrolState patrol = _activePatrols[i];
+           IBusMovementState state = _activeStates[i];
 
-            if (!patrol.IsActive)
-                continue;
+           if (!state.IsActive)
+           {
+               _activeStates.RemoveAt(i);
+               
+               continue;
+           }
 
-            if (patrol.IsBoarding)
-                continue;
-
-            if (TryHandleBoardingCheckpoint(patrol))
-                continue;
-
-            if (patrol.IsBlockedAhead(_activePatrols, _minSpacing))
+           if (state is BusPatrolState patrol)
+           {
+               if (patrol.IsBoarding)
+                   continue;
+               
+               if (TryHandleBoardingCheckpoint(patrol))
+                   continue;
+           }
+           
+            if (state.IsBlockedAhead(_activeStates, _minSpacing))
                 continue;
                 
-            patrol.Tick(Time.deltaTime);
+            state.Tick(Time.deltaTime);
+
+            if (state is BusPathState pathState && pathState.IsComplete)
+                pathState.Complete();
         }
     }
 
     public void StartPatrolling(Bus bus, BusRoute route, IReadOnlyList<Vector3> entryWaypoints = null)
     {
-        var state = new BusPatrolState(bus, _moveSpeed, bus.ModelForwardOffsetY);
+        var state = new BusPatrolState(bus, _moveSpeed, bus.ModelForwardOffsetY, _nextPriorityOrder);
+        _nextPriorityOrder++;
+        
         state.BeginPatrol(route, entryWaypoints);
         
-        _activePatrols.Add(state);
+        _activeStates.Add(state);
     }
 
     public void StopPatrolling(Bus bus)
     {
-        BusPatrolState state = _activePatrols.Find(patrol => patrol.Bus == bus);
-        
-        if (state == null)
+        foreach (IBusMovementState state in _activeStates)
+        {
+            if (state.Bus != bus || !(state is BusPatrolState patrol))
+                continue;
+
+            patrol.EndPatrol();
+
             return;
-        
-        state.EndPatrol();
-        _activePatrols.Remove(state);
+        }
+    }
+    
+    public IEnumerator MoveAlongPath(Bus bus, IReadOnlyList<Vector3> path, int effectivePriority)
+    {
+        var state = new BusPathState(bus, path, _moveSpeed, bus.ModelForwardOffsetY, effectivePriority, _nextPriorityOrder);
+        _nextPriorityOrder++;
+
+        _activeStates.Add(state);
+
+        yield return new WaitUntil(() => !state.IsActive);
+    }
+    
+    private int CountActivePatrols()
+    {
+        int count = 0;
+
+        foreach (IBusMovementState state in _activeStates)
+        {
+            if (state is BusPatrolState)
+                count++;
+        }
+
+        return count;
     }
 
     private bool TryHandleBoardingCheckpoint(BusPatrolState patrol)
@@ -87,7 +125,6 @@ public class BusPatrolManager : MonoBehaviour
         if (bus.Capacity.IsFull)
         {
             patrol.EndPatrol();
-            _activePatrols.Remove(patrol);
 
             yield return _boarding.DepartFull(bus);
             

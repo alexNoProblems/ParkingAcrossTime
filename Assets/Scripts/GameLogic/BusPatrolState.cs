@@ -1,15 +1,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BusPatrolState
+public class BusPatrolState : IBusMovementState
 {
     private const float MinMovementSqrMagnitude = 0.0001f;
+    private const int EnteringPriority = 0;
+    private const int OnLoopedPriority = 2;
     
     private readonly RoutePath _pathCalculator = new RoutePath();
     private readonly Transform _transform;
     private readonly MovementRotator _rotator = new MovementRotator();
     private readonly float _moveSpeed;
     private readonly float _modelForwardOffsetY;
+    private readonly int _priorityOrder;
  
     private List<Vector3> _entryPath;
     private List<Vector3> _loopRoute;
@@ -17,20 +20,24 @@ public class BusPatrolState
     private float _loopLength;
     private bool _isBoarding;
     private bool _hasReachedCheckpointThisPass;
- 
+  
     public Bus Bus { get; }
     public float CurrentDistance { get; private set; }
     public bool HasEnteredLoop { get; private set; }
     public bool IsActive { get; private set; }
     public bool IsBoarding => _isBoarding;
     public bool HasReachedCheckpointThisPass => _hasReachedCheckpointThisPass;
+    public int EffectivePriority => HasEnteredLoop ? OnLoopedPriority : EnteringPriority;
+    public int PriorityOrder => _priorityOrder;
+    public Vector3 Position => _transform.position;
  
-    public BusPatrolState(Bus bus, float moveSpeed, float modelForwardOffsetY)
+    public BusPatrolState(Bus bus, float moveSpeed, float modelForwardOffsetY, int priorityOrder)
     {
         Bus = bus;
         _transform = bus.transform;
         _moveSpeed = moveSpeed;
         _modelForwardOffsetY = modelForwardOffsetY;
+        _priorityOrder = priorityOrder;
     }
  
     public void BeginPatrol(BusRoute route, IReadOnlyList<Vector3> entryWaypoints = null)
@@ -63,26 +70,20 @@ public class BusPatrolState
         _hasReachedCheckpointThisPass = reached;
     }
  
-    public bool IsBlockedAhead(IReadOnlyList<BusPatrolState> allPatrols, float minSpacing)
+    public bool IsBlockedAhead(IReadOnlyList<IBusMovementState> allStates, float minSpacing)
     {
-        foreach (BusPatrolState other in allPatrols)
+        foreach (IBusMovementState other in allStates)
         {
-            if (other == this || !other.IsActive)
+            if (ReferenceEquals(other, this) || !other.IsActive)
+                continue;
+
+            if (HasHigherPriorityThan(other))
                 continue;
  
-            if (HasEnteredLoop && !other.HasEnteredLoop)
-                continue;
- 
-            Vector3 toOther = other._transform.position - _transform.position;
+            Vector3 toOther = other.Position - _transform.position;
             toOther.y = 0f;
  
-            if (toOther.magnitude > minSpacing)
-                continue;
- 
-            if (toOther.sqrMagnitude < MinMovementSqrMagnitude)
-                return true;
- 
-            if (Vector3.Dot(toOther.normalized, _transform.forward) > 0f)
+            if (toOther.magnitude <= minSpacing)
                 return true;
         }
  
@@ -124,6 +125,14 @@ public class BusPatrolState
         Vector3 direction = _pathCalculator.GetDirectionAtDistance(route, distance);
         Quaternion offset = Quaternion.Euler(0f, _modelForwardOffsetY, 0f);
         _rotator.RotateInDirection(_transform, direction, offset);
+    }
+
+    private bool HasHigherPriorityThan(IBusMovementState other)
+    {
+        if (EffectivePriority != other.EffectivePriority)
+            return EffectivePriority > other.EffectivePriority;
+
+        return _priorityOrder > other.PriorityOrder;
     }
  
     private List<Vector3> BuildEntryPath(List<Vector3> waypoints, IReadOnlyList<Vector3> entryWaypoints)

@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class BusBoarding : MonoBehaviour
 {
+    private const int EnteringPriority = 0;
+    private const int OnLoopedPriority = 2;
+    
     [SerializeField] private List<Transform> _routePoints;
     [SerializeField] private List<Transform> _exitRoutePoints;
     [SerializeField] private Transform _boardingPoint;
@@ -45,17 +48,13 @@ public class BusBoarding : MonoBehaviour
     public IEnumerator DepartFull(Bus bus)
     {
         var path = new List<Vector3>(_exitRoutePoints.Count + 1);
-        
+
         foreach (Transform point in _exitRoutePoints)
             path.Add(point.position);
 
         path.Add(_exitPoint.position);
 
-        bus.Mover.SetPath(path);
-
-        yield return null;
-
-        yield return bus.Mover.StoppedWait;
+        yield return _patrolManager.MoveAlongPath(bus, path, effectivePriority: OnLoopedPriority);
 
         Destroy(bus.gameObject);
     }
@@ -97,17 +96,13 @@ public class BusBoarding : MonoBehaviour
     private IEnumerator BoardStickmen(Bus bus)
     {
         var path = new List<Vector3>(_routePoints.Count + 1);
-        
+
         foreach (Transform point in _routePoints)
             path.Add(point.position);
-        
-        path.Add(_boardingPoint.position);
-        
-        bus.Mover.SetPath(path);
-        
-        yield return null;
 
-        yield return bus.Mover.StoppedWait;
+        path.Add(_boardingPoint.position);
+
+        yield return _patrolManager.MoveAlongPath(bus, path, effectivePriority: EnteringPriority);
 
         yield return BoardAvailableStickmen(bus);
     }
