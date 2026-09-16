@@ -12,6 +12,7 @@ public class BusPatrolManager : MonoBehaviour
  
     private readonly List<IBusMovementState> _activeStates = new List<IBusMovementState>();
     private int _nextPriorityOrder;
+    private Bus _boardingSlotOccupant;
  
     public bool HasFreeSlot => CountActivePatrols() < _maxConcurrentPatrols;
 
@@ -36,11 +37,8 @@ public class BusPatrolManager : MonoBehaviour
                if (TryHandleBoardingCheckpoint(patrol))
                    continue;
            }
-           
-            if (state.IsBlockedAhead(_activeStates, _minSpacing))
-                continue;
                 
-            state.Tick(Time.deltaTime);
+            state.Tick(Time.deltaTime, _activeStates, _minSpacing);
 
             if (state is BusPathState pathState && pathState.IsComplete)
                 pathState.Complete();
@@ -79,6 +77,38 @@ public class BusPatrolManager : MonoBehaviour
 
         yield return new WaitUntil(() => !state.IsActive);
     }
+
+    public IBusMovementState RegisterStationary(Bus bus, int effectivePriority)
+    {
+        var state = new BusStationaryState(bus, effectivePriority, _nextPriorityOrder);
+        _nextPriorityOrder++;
+
+        _activeStates.Add(state);
+
+        return state;
+    }
+
+    public void UnregisterStationary(IBusMovementState state)
+    {
+        if (state is BusStationaryState stationary)
+            stationary.Complete();
+    }
+
+    public bool TryAcquireBoardingSlot(Bus bus)
+    {
+        if (_boardingSlotOccupant != null && _boardingSlotOccupant != bus)
+            return false;
+
+        _boardingSlotOccupant = bus;
+
+        return true;
+    }
+
+    public void ReleaseBoardingSlot(Bus bus)
+    {
+        if (_boardingSlotOccupant == bus)
+            _boardingSlotOccupant = null;
+    }
     
     private int CountActivePatrols()
     {
@@ -107,6 +137,9 @@ public class BusPatrolManager : MonoBehaviour
 
         if (patrol.HasReachedCheckpointThisPass || !_boarding.ShouldBoard(patrol.Bus))
             return false;
+
+        if (!TryAcquireBoardingSlot(patrol.Bus))
+            return false;
         
         patrol.SetReachedCheckpoint(true);
         patrol.SetIsBoarding(true);
@@ -121,6 +154,8 @@ public class BusPatrolManager : MonoBehaviour
         Bus bus = patrol.Bus;
 
         yield return _boarding.BoardAvailableStickmen(bus);
+
+        ReleaseBoardingSlot(bus);
 
         if (bus.Capacity.IsFull)
         {

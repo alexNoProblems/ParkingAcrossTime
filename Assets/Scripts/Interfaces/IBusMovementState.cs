@@ -9,7 +9,5 @@ public interface IBusMovementState
    int PriorityOrder { get; }
    Vector3 Position { get; }
    
-   bool IsBlockedAhead(IReadOnlyList<IBusMovementState> allStates, float minSpacing);
-   
-   void Tick(float deltaTime);
+   void Tick(float deltaTime, IReadOnlyList<IBusMovementState> allStates, float minSpacing);
 }

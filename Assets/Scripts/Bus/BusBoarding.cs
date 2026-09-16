@@ -104,6 +104,13 @@ public class BusBoarding : MonoBehaviour
 
         yield return _patrolManager.MoveAlongPath(bus, path, effectivePriority: EnteringPriority);
 
+        IBusMovementState stationary = _patrolManager.RegisterStationary(bus, OnLoopedPriority);
+
+        yield return new WaitUntil(() => _patrolManager.TryAcquireBoardingSlot(bus));
+
         yield return BoardAvailableStickmen(bus);
+
+        _patrolManager.ReleaseBoardingSlot(bus);
+        _patrolManager.UnregisterStationary(stationary);
     }
 }

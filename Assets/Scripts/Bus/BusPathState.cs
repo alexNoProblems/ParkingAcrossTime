@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class BusPathState : IBusMovementState
 {
-    private const float MinMovementSqrMagnitude = 0.0001f;
-
+    private readonly MovementPriorityComparer _priorityComparer = new MovementPriorityComparer();
+    private readonly SpacingClamp _spacingClamp = new SpacingClamp();
     private readonly RoutePath _pathCalculator = new RoutePath();
     private readonly MovementRotator _rotator = new MovementRotator();
     private readonly Transform _transform;
@@ -43,30 +43,37 @@ public class BusPathState : IBusMovementState
         IsActive = false;
     }
 
-    public bool IsBlockedAhead(IReadOnlyList<IBusMovementState> allStates, float minSpacing)
+    public void Tick(float deltaTime, IReadOnlyList<IBusMovementState> allStates, float minSpacing)
     {
+        float desiredDistance = _currentDistance + _moveSpeed * deltaTime;
+        List<Vector3> blockerPositions = CollectBlockerPositions(allStates);
+        float clampedDistance = _spacingClamp.ClampDistance(GetPositionAtDistance, _currentDistance, desiredDistance,
+            blockerPositions, minSpacing);
+        
+        MoveTo(clampedDistance);
+    }
+
+    private Vector3 GetPositionAtDistance(float distance)
+    {
+        return _pathCalculator.GetPointAtDistance(_path, Mathf.Min(distance, _pathLength));
+    }
+    
+    private List<Vector3> CollectBlockerPositions(IReadOnlyList<IBusMovementState> allStates)
+    {
+        var positions = new List<Vector3>();
+
         foreach (IBusMovementState other in allStates)
         {
             if (ReferenceEquals(other, this) || !other.IsActive)
                 continue;
 
-            if (HasHigherPriorityThan(other))
+            if (_priorityComparer.HasHigherPriority(this, other));
                 continue;
 
-            Vector3 toOther = other.Position - _transform.position;
-            toOther.y = 0f;
-
-            if (toOther.magnitude <= minSpacing)
-                continue;
+            positions.Add(other.Position);
         }
 
-        return false;
-    }
-
-    public void Tick(float deltaTime)
-    {
-        float desiredDistance = _currentDistance + _moveSpeed * deltaTime;
-        MoveTo(desiredDistance);
+        return positions;
     }
 
     private void MoveTo(float distance)
@@ -82,13 +89,5 @@ public class BusPathState : IBusMovementState
 
         if (_currentDistance >= _pathLength)
             IsComplete = true;
-    }
-
-    private bool HasHigherPriorityThan(IBusMovementState other)
-    {
-        if (EffectivePriority != other.EffectivePriority)
-            return EffectivePriority > other.EffectivePriority;
-
-        return _priorityOrder > other.PriorityOrder;
     }
 }

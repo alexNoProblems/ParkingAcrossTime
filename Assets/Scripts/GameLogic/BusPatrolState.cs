@@ -3,10 +3,11 @@ using UnityEngine;
 
 public class BusPatrolState : IBusMovementState
 {
-    private const float MinMovementSqrMagnitude = 0.0001f;
     private const int EnteringPriority = 0;
     private const int OnLoopedPriority = 2;
     
+    private readonly MovementPriorityComparer _priorityComparer = new MovementPriorityComparer();
+    private readonly SpacingClamp _spacingClamp = new SpacingClamp();
     private readonly RoutePath _pathCalculator = new RoutePath();
     private readonly Transform _transform;
     private readonly MovementRotator _rotator = new MovementRotator();
@@ -69,32 +70,45 @@ public class BusPatrolState : IBusMovementState
     {
         _hasReachedCheckpointThisPass = reached;
     }
+    
  
-    public bool IsBlockedAhead(IReadOnlyList<IBusMovementState> allStates, float minSpacing)
+    public void Tick(float deltaTime, IReadOnlyList<IBusMovementState> allStates, float minSpacing)
     {
+        float desiredDistance = CurrentDistance + _moveSpeed * deltaTime;
+
+        List<Vector3> blockerPosition = CollectBlockerPositions(allStates);
+        float clampedDistance = _spacingClamp.ClampDistance(GetPositionAtDistance, CurrentDistance, desiredDistance,
+            blockerPosition, minSpacing);
+        
+        MoveTo(clampedDistance);
+    }
+
+    private Vector3 GetPositionAtDistance(float distance)
+    {
+        if (distance <= _entryLength)
+            return _pathCalculator.GetPointAtDistance(_entryPath, distance);
+        
+        float loopDistance = _loopLength > 0f ? (distance - _entryLength) % _loopLength : 0f;
+        
+        return _pathCalculator.GetPointAtDistance(_loopRoute, loopDistance);
+    }
+
+    private List<Vector3> CollectBlockerPositions(IReadOnlyList<IBusMovementState> allStates)
+    {
+        var positions = new List<Vector3>();
+
         foreach (IBusMovementState other in allStates)
         {
             if (ReferenceEquals(other, this) || !other.IsActive)
                 continue;
-
-            if (HasHigherPriorityThan(other))
+            
+            if (_priorityComparer.HasHigherPriority(this, other))
                 continue;
- 
-            Vector3 toOther = other.Position - _transform.position;
-            toOther.y = 0f;
- 
-            if (toOther.magnitude <= minSpacing)
-                return true;
+            
+            positions.Add(other.Position);
         }
- 
-        return false;
-    }
- 
-    public void Tick(float deltaTime)
-    {
-        float desiredDistance = CurrentDistance + _moveSpeed * deltaTime;
- 
-        MoveTo(desiredDistance);
+        
+        return positions;
     }
  
     private void MoveTo(float distance)
@@ -125,14 +139,6 @@ public class BusPatrolState : IBusMovementState
         Vector3 direction = _pathCalculator.GetDirectionAtDistance(route, distance);
         Quaternion offset = Quaternion.Euler(0f, _modelForwardOffsetY, 0f);
         _rotator.RotateInDirection(_transform, direction, offset);
-    }
-
-    private bool HasHigherPriorityThan(IBusMovementState other)
-    {
-        if (EffectivePriority != other.EffectivePriority)
-            return EffectivePriority > other.EffectivePriority;
-
-        return _priorityOrder > other.PriorityOrder;
     }
  
     private List<Vector3> BuildEntryPath(List<Vector3> waypoints, IReadOnlyList<Vector3> entryWaypoints)
