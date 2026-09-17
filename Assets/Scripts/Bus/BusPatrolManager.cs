@@ -11,6 +11,7 @@ public class BusPatrolManager : MonoBehaviour
     [SerializeField] private float _boardingCheckpointRadius = 0.3f;
  
     private readonly List<IBusMovementState> _activeStates = new List<IBusMovementState>();
+    private readonly Dictionary<Bus, int> _priorityOrderByBus = new Dictionary<Bus, int>();
     private int _nextPriorityOrder;
     private Bus _boardingSlotOccupant;
  
@@ -47,9 +48,8 @@ public class BusPatrolManager : MonoBehaviour
 
     public void StartPatrolling(Bus bus, BusRoute route, IReadOnlyList<Vector3> entryWaypoints = null)
     {
-        var state = new BusPatrolState(bus, _moveSpeed, bus.ModelForwardOffsetY, _nextPriorityOrder);
-        _nextPriorityOrder++;
-        
+        var state = new BusPatrolState(bus, _moveSpeed, bus.ModelForwardOffsetY, GetOrAssignPriorityOrder(bus));
+
         state.BeginPatrol(route, entryWaypoints);
         
         _activeStates.Add(state);
@@ -70,8 +70,7 @@ public class BusPatrolManager : MonoBehaviour
     
     public IEnumerator MoveAlongPath(Bus bus, IReadOnlyList<Vector3> path, int effectivePriority)
     {
-        var state = new BusPathState(bus, path, _moveSpeed, bus.ModelForwardOffsetY, effectivePriority, _nextPriorityOrder);
-        _nextPriorityOrder++;
+        var state = new BusPathState(bus, path, _moveSpeed, bus.ModelForwardOffsetY, effectivePriority, GetOrAssignPriorityOrder(bus));
 
         _activeStates.Add(state);
 
@@ -80,12 +79,23 @@ public class BusPatrolManager : MonoBehaviour
 
     public IBusMovementState RegisterStationary(Bus bus, int effectivePriority)
     {
-        var state = new BusStationaryState(bus, effectivePriority, _nextPriorityOrder);
-        _nextPriorityOrder++;
+        var state = new BusStationaryState(bus, effectivePriority, GetOrAssignPriorityOrder(bus));
 
         _activeStates.Add(state);
 
         return state;
+    }
+
+    private int GetOrAssignPriorityOrder(Bus bus)
+    {
+        if (!_priorityOrderByBus.TryGetValue(bus, out int priorityOrder))
+        {
+            priorityOrder = _nextPriorityOrder;
+            _nextPriorityOrder++;
+            _priorityOrderByBus[bus] = priorityOrder;
+        }
+
+        return priorityOrder;
     }
 
     public void UnregisterStationary(IBusMovementState state)
@@ -160,12 +170,14 @@ public class BusPatrolManager : MonoBehaviour
         if (bus.Capacity.IsFull)
         {
             patrol.EndPatrol();
+            bus.PlayExhaustEffect();
 
             yield return _boarding.DepartFull(bus);
             
             yield break;
         }
         
+        bus.PlayExhaustEffect();
         patrol.SetIsBoarding(false);
     }
 }

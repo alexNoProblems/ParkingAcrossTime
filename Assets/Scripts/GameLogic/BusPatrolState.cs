@@ -31,6 +31,7 @@ public class BusPatrolState : IBusMovementState
     public int EffectivePriority => HasEnteredLoop ? OnLoopedPriority : EnteringPriority;
     public int PriorityOrder => _priorityOrder;
     public Vector3 Position => _transform.position;
+    public bool BlocksAllTraffic => _isBoarding;
  
     public BusPatrolState(Bus bus, float moveSpeed, float modelForwardOffsetY, int priorityOrder)
     {
@@ -101,10 +102,10 @@ public class BusPatrolState : IBusMovementState
         {
             if (ReferenceEquals(other, this) || !other.IsActive)
                 continue;
-            
-            if (_priorityComparer.HasHigherPriority(this, other))
+
+            if (!other.BlocksAllTraffic && _priorityComparer.HasHigherPriority(this, other))
                 continue;
-            
+
             positions.Add(other.Position);
         }
         

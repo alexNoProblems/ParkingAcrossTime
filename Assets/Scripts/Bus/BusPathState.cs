@@ -22,6 +22,7 @@ public class BusPathState : IBusMovementState
     public int PriorityOrder => _priorityOrder;
     public Vector3 Position => _transform.position;
     public bool IsComplete { get; private set; }
+    public bool BlocksAllTraffic => false;
 
     public BusPathState(Bus bus, IReadOnlyList<Vector3> path, float moveSpeed, float modelForwardOffsetY,
         int effectivePriority, int priorityOrder)
@@ -67,7 +68,7 @@ public class BusPathState : IBusMovementState
             if (ReferenceEquals(other, this) || !other.IsActive)
                 continue;
 
-            if (_priorityComparer.HasHigherPriority(this, other));
+            if (!other.BlocksAllTraffic && _priorityComparer.HasHigherPriority(this, other))
                 continue;
 
             positions.Add(other.Position);

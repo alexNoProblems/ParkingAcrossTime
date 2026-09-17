@@ -8,6 +8,7 @@ public class BusStationaryState : IBusMovementState
     public int EffectivePriority { get; }
     public int PriorityOrder { get; }
     public Vector3 Position => Bus.transform.position;
+    public bool BlocksAllTraffic => true;
 
     public BusStationaryState(Bus bus, int effectivePriority, int priorityOrder)
     {

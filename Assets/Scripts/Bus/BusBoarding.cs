@@ -75,10 +75,15 @@ public class BusBoarding : MonoBehaviour
 
         if (bus.Capacity.IsFull)
         {
+            bus.PlayExhaustEffect();
+            
             yield return DepartFull(bus);
         }
         else
         {
+            if (boarded)
+                bus.PlayExhaustEffect();
+            
             List<Vector3> entryWaypoints = null;
 
             if (boarded)
