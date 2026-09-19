@@ -3,9 +3,6 @@ using UnityEngine;
 
 public class BusPatrolState : IBusMovementState
 {
-    private const int EnteringPriority = 0;
-    private const int OnLoopedPriority = 2;
-    
     private readonly MovementPriorityComparer _priorityComparer = new MovementPriorityComparer();
     private readonly SpacingClamp _spacingClamp = new SpacingClamp();
     private readonly RoutePath _pathCalculator = new RoutePath();
@@ -28,7 +25,7 @@ public class BusPatrolState : IBusMovementState
     public bool IsActive { get; private set; }
     public bool IsBoarding => _isBoarding;
     public bool HasReachedCheckpointThisPass => _hasReachedCheckpointThisPass;
-    public int EffectivePriority => HasEnteredLoop ? OnLoopedPriority : EnteringPriority;
+    public int EffectivePriority => HasEnteredLoop ? MovementPriority.OnLooped : MovementPriority.Entering;
     public int PriorityOrder => _priorityOrder;
     public Vector3 Position => _transform.position;
     public bool BlocksAllTraffic => _isBoarding;

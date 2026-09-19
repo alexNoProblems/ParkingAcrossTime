@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class BusBoarding : MonoBehaviour
 {
-    private const int EnteringPriority = 0;
-    private const int OnLoopedPriority = 2;
-    
     [SerializeField] private List<Transform> _routePoints;
     [SerializeField] private List<Transform> _exitRoutePoints;
     [SerializeField] private Transform _boardingPoint;
@@ -54,7 +51,7 @@ public class BusBoarding : MonoBehaviour
 
         path.Add(_exitPoint.position);
 
-        yield return _patrolManager.MoveAlongPath(bus, path, effectivePriority: OnLoopedPriority);
+        yield return _patrolManager.MoveAlongPath(bus, path, effectivePriority: MovementPriority.OnLooped);
 
         Destroy(bus.gameObject);
     }
@@ -107,9 +104,9 @@ public class BusBoarding : MonoBehaviour
 
         path.Add(_boardingPoint.position);
 
-        yield return _patrolManager.MoveAlongPath(bus, path, effectivePriority: EnteringPriority);
+        yield return _patrolManager.MoveAlongPath(bus, path, effectivePriority: MovementPriority.Entering);
 
-        IBusMovementState stationary = _patrolManager.RegisterStationary(bus, OnLoopedPriority);
+        IBusMovementState stationary = _patrolManager.RegisterStationary(bus, MovementPriority.OnLooped);
 
         yield return new WaitUntil(() => _patrolManager.TryAcquireBoardingSlot(bus));
 

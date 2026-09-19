@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class StickmenSpawner : MonoBehaviour, ISpawner<StickmanSpawnData>
@@ -15,31 +14,21 @@ public class StickmenSpawner : MonoBehaviour, ISpawner<StickmanSpawnData>
 
     private WaitForSeconds _waitForSeconds;
     private int _spawnedCount;
-
-    private RoutePath routePath;
-    private StickmanMover _lastSpawnedMover;
-    private List<Vector3> _route;
     
-    private float _routeTotalLength;
-    private float _queueStartDistance;
-    private float _queueTotalLength;
+    private StickmanMover _lastSpawnedMover;
+    private StickmanRouteBuilder _routeBuilder;
 
     private void Awake()
     {
         _waitForSeconds = new WaitForSeconds(_spawnInterval);
-        routePath = new RoutePath();
-
-        _route = BuildRoute();
-        _routeTotalLength = routePath.GetTotalLength(_route);
-
-        _queueStartDistance = CalculateQueueStartDistance();
-        _queueTotalLength = routePath.GetTotalLength(_queueWaypoints.Select(w => w.position).ToList());
-        _stickmanQueue.Initialize(_queueStartDistance);
+        _routeBuilder = new StickmanRouteBuilder(_spawnPoint, _pathWaypoints, _queueWaypoints);
+        
+        _stickmanQueue.Initialize(_routeBuilder.QueueStartDistance);
     }
 
     public IEnumerator Spawn(StickmanSpawnData data)
     {
-        int maxCapacity = Mathf.FloorToInt(_queueTotalLength / _queueSlotSpacing) + 1;
+        int maxCapacity = Mathf.FloorToInt(_routeBuilder.QueueTotalLength / _queueSlotSpacing) + 1;
 
         for (int i = 0; i < data.Count; i++)
         {
@@ -50,9 +39,9 @@ public class StickmenSpawner : MonoBehaviour, ISpawner<StickmanSpawnData>
 
             if (stickmanObject.TryGetComponent<Stickman>(out var stickman))
             {
-                float maxDistance = _lastSpawnedMover == null ? _queueStartDistance : _routeTotalLength;
+                float maxDistance = _lastSpawnedMover == null ? _routeBuilder.QueueStartDistance : _routeBuilder.RouteTotalLength;
 
-                stickman.Initialize(data.Color, _route, _lastSpawnedMover, _queueSlotSpacing, maxDistance);
+                stickman.Initialize(data.Color, _routeBuilder.Route, _lastSpawnedMover, _queueSlotSpacing, maxDistance);
 
                 _lastSpawnedMover = stickman.Mover;
                 _stickmanQueue.Register(stickman);
@@ -66,23 +55,5 @@ public class StickmenSpawner : MonoBehaviour, ISpawner<StickmanSpawnData>
 
             yield return _waitForSeconds;
         }
-    }
-
-    private List<Vector3> BuildRoute()
-    {
-        var route = new List<Vector3> { _spawnPoint.position };
-        route.AddRange(_pathWaypoints.Select(w => w.position));
-        route.AddRange(_queueWaypoints.Select(w => w.position));
-
-        return route;
-    }
-
-    private float CalculateQueueStartDistance()
-    {
-        var corridor = new List<Vector3> { _spawnPoint.position };
-        corridor.AddRange(_pathWaypoints.Select(w => w.position));
-        corridor.Add(_queueWaypoints[0].position);
-
-        return routePath.GetTotalLength(corridor);
     }
 }

@@ -4,10 +4,10 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 public class CameraFitWidth : MonoBehaviour
 {
-    private const float HalfToFullMultiplier = 2f;
+    [SerializeField] private float _targetWidth = 6f;
+    [SerializeField] private float _targetHeight = 12f;
     
-    public float _targetWidth = 6f;
-    public float _targetHeight = 12f;
+    private const float HalfToFullMultiplier = 2f;
     
     private Camera _camera;
     private int _lastScreenWidth;

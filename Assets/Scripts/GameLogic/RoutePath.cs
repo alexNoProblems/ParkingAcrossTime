@@ -21,50 +21,56 @@ public class RoutePath
         if (distance <= 0f)
             return points[0];
 
-        float traveled = 0f;
+        if (!TryFindSegment(points, distance, out int segmentIndex, out float traveledBeforeSegment))
+            return points[points.Count - 1];
 
-        for (int i = 0; i < points.Count - 1; i++)
-        {
-            Vector3 segmentStart = points[i];
-            Vector3 segmentEnd = points[i + 1];
-            float segmentLength = Vector3.Distance(segmentStart, segmentEnd);
+        Vector3 segmentStart = points[segmentIndex];
+        Vector3 segmentEnd = points[segmentIndex + 1];
+        float segmentLength = Vector3.Distance(segmentStart, segmentEnd);
+        float remaining = distance - traveledBeforeSegment;
+        Vector3 direction = segmentLength > 0f ? (segmentEnd - segmentStart) / segmentLength : Vector3.zero;
 
-            if (traveled + segmentLength >= distance)
-            {
-                float remaining = distance - traveled;
-                Vector3 direction = segmentLength > 0f ? (segmentEnd - segmentStart) / segmentLength : Vector3.zero;
-                
-                return segmentStart + direction * remaining;
-            }
-            
-            traveled += segmentLength;
-        }
-        
-        return points[points.Count - 1];
+        return segmentStart + direction * remaining;
     }
 
     public Vector3 GetDirectionAtDistance(IReadOnlyList<Vector3> points, float distance)
     {
         if (points.Count < 2)
             return Vector3.zero;
- 
+
+        if (!TryFindSegment(points, distance, out int segmentIndex, out _))
+            segmentIndex = points.Count - 2;
+
+        Vector3 segmentStart = points[segmentIndex];
+        Vector3 segmentEnd = points[segmentIndex + 1];
+        float segmentLength = Vector3.Distance(segmentStart, segmentEnd);
+
+        return segmentLength > 0f ? (segmentEnd - segmentStart) / segmentLength : Vector3.zero;
+    }
+
+    private bool TryFindSegment(IReadOnlyList<Vector3> points, float distance, out int segmentIndex,
+        out float traveledBeforeSegment)
+    {
         float traveled = 0f;
- 
+
         for (int i = 0; i < points.Count - 1; i++)
         {
-            Vector3 segmentStart = points[i];
-            Vector3 segmentEnd = points[i + 1];
-            float segmentLength = Vector3.Distance(segmentStart, segmentEnd);
- 
-            if (traveled + segmentLength >= distance || i == points.Count - 2)
+            float segmentLength = Vector3.Distance(points[i], points[i + 1]);
+
+            if (traveled + segmentLength >= distance)
             {
-                return segmentLength > 0f ? (segmentEnd - segmentStart) / segmentLength
-                    : Vector3.zero;
+                segmentIndex = i;
+                traveledBeforeSegment = traveled;
+
+                return true;
             }
- 
+
             traveled += segmentLength;
         }
- 
-        return Vector3.zero;
+
+        segmentIndex = -1;
+        traveledBeforeSegment = 0f;
+
+        return false;
     }
 }

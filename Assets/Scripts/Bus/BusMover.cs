@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class BusMover : MonoBehaviour
 {
-    private const float MinMovementSqrMagnitude = 0.0001f;
-
     [SerializeField] private float _moveSpeed = 4f;
     
     private readonly MovementRotator _rotator = new MovementRotator();

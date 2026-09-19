@@ -45,8 +45,8 @@ public class BusSpawner : MonoBehaviour, ISpawner<BusSpawnData>
 
     private void RequestBus(BusRequest request)
     {
-        BusLane leastLoadedLine = FindLeastLoadedLane();
-        leastLoadedLine.Enqueue(request);
+        BusLane leastLoadedLane = FindLeastLoadedLane();
+        leastLoadedLane.Enqueue(request);
     }
 
     private BusLane FindLeastLoadedLane()

@@ -11,11 +11,16 @@ public class BusPatrolManager : MonoBehaviour
     [SerializeField] private float _boardingCheckpointRadius = 0.3f;
  
     private readonly List<IBusMovementState> _activeStates = new List<IBusMovementState>();
-    private readonly Dictionary<Bus, int> _priorityOrderByBus = new Dictionary<Bus, int>();
-    private int _nextPriorityOrder;
-    private Bus _boardingSlotOccupant;
+    private readonly PriorityOrderRegistry _priorityOrderRegistry = new PriorityOrderRegistry();
+   
+    private PatrolBoardingCoordinator _boardingCoordinator;
  
     public bool HasFreeSlot => CountActivePatrols() < _maxConcurrentPatrols;
+
+    private void Awake()
+    {
+        _boardingCoordinator = new PatrolBoardingCoordinator(_boarding, _boardingCheckpointRadius);
+    }
 
     private void Update()
     {
@@ -35,20 +40,20 @@ public class BusPatrolManager : MonoBehaviour
                if (patrol.IsBoarding)
                    continue;
                
-               if (TryHandleBoardingCheckpoint(patrol))
+               if (_boardingCoordinator.TryHandleCheckpoint(patrol, this))
                    continue;
            }
                 
-            state.Tick(Time.deltaTime, _activeStates, _minSpacing);
+           state.Tick(Time.deltaTime, _activeStates, _minSpacing);
 
-            if (state is BusPathState pathState && pathState.IsComplete)
-                pathState.Complete();
+           if (state is BusPathState pathState && pathState.IsComplete)
+               pathState.Complete();
         }
     }
 
     public void StartPatrolling(Bus bus, BusRoute route, IReadOnlyList<Vector3> entryWaypoints = null)
     {
-        var state = new BusPatrolState(bus, _moveSpeed, bus.ModelForwardOffsetY, GetOrAssignPriorityOrder(bus));
+        var state = new BusPatrolState(bus, _moveSpeed, bus.ModelForwardOffsetY, _priorityOrderRegistry.GetOrAssign(bus));
 
         state.BeginPatrol(route, entryWaypoints);
         
@@ -70,7 +75,7 @@ public class BusPatrolManager : MonoBehaviour
     
     public IEnumerator MoveAlongPath(Bus bus, IReadOnlyList<Vector3> path, int effectivePriority)
     {
-        var state = new BusPathState(bus, path, _moveSpeed, bus.ModelForwardOffsetY, effectivePriority, GetOrAssignPriorityOrder(bus));
+        var state = new BusPathState(bus, path, _moveSpeed, bus.ModelForwardOffsetY, effectivePriority, _priorityOrderRegistry.GetOrAssign(bus));
 
         _activeStates.Add(state);
 
@@ -79,23 +84,11 @@ public class BusPatrolManager : MonoBehaviour
 
     public IBusMovementState RegisterStationary(Bus bus, int effectivePriority)
     {
-        var state = new BusStationaryState(bus, effectivePriority, GetOrAssignPriorityOrder(bus));
+        var state = new BusStationaryState(bus, effectivePriority, _priorityOrderRegistry.GetOrAssign(bus));
 
         _activeStates.Add(state);
 
         return state;
-    }
-
-    private int GetOrAssignPriorityOrder(Bus bus)
-    {
-        if (!_priorityOrderByBus.TryGetValue(bus, out int priorityOrder))
-        {
-            priorityOrder = _nextPriorityOrder;
-            _nextPriorityOrder++;
-            _priorityOrderByBus[bus] = priorityOrder;
-        }
-
-        return priorityOrder;
     }
 
     public void UnregisterStationary(IBusMovementState state)
@@ -104,21 +97,8 @@ public class BusPatrolManager : MonoBehaviour
             stationary.Complete();
     }
 
-    public bool TryAcquireBoardingSlot(Bus bus)
-    {
-        if (_boardingSlotOccupant != null && _boardingSlotOccupant != bus)
-            return false;
-
-        _boardingSlotOccupant = bus;
-
-        return true;
-    }
-
-    public void ReleaseBoardingSlot(Bus bus)
-    {
-        if (_boardingSlotOccupant == bus)
-            _boardingSlotOccupant = null;
-    }
+    public bool TryAcquireBoardingSlot(Bus bus) => _boardingCoordinator.TryAcquireSlot(bus);
+    public void ReleaseBoardingSlot(Bus bus) => _boardingCoordinator.ReleaseSlot(bus);
     
     private int CountActivePatrols()
     {
@@ -131,53 +111,5 @@ public class BusPatrolManager : MonoBehaviour
         }
 
         return count;
-    }
-
-    private bool TryHandleBoardingCheckpoint(BusPatrolState patrol)
-    {
-        float distance = Vector3.Distance(patrol.Bus.transform.position, _boarding.BoardingPoint.position);
-        bool atCheckpoint = distance <= _boardingCheckpointRadius;
-
-        if (!atCheckpoint)
-        {
-            patrol.SetReachedCheckpoint(false);
-            
-            return false;
-        }
-
-        if (patrol.HasReachedCheckpointThisPass || !_boarding.ShouldBoard(patrol.Bus))
-            return false;
-
-        if (!TryAcquireBoardingSlot(patrol.Bus))
-            return false;
-        
-        patrol.SetReachedCheckpoint(true);
-        patrol.SetIsBoarding(true);
-        
-        StartCoroutine(BoardDuringPatrol(patrol));
-        
-        return true;
-    }
-
-    private IEnumerator BoardDuringPatrol(BusPatrolState patrol)
-    {
-        Bus bus = patrol.Bus;
-
-        yield return _boarding.BoardAvailableStickmen(bus);
-
-        ReleaseBoardingSlot(bus);
-
-        if (bus.Capacity.IsFull)
-        {
-            patrol.EndPatrol();
-            bus.PlayExhaustEffect();
-
-            yield return _boarding.DepartFull(bus);
-            
-            yield break;
-        }
-        
-        bus.PlayExhaustEffect();
-        patrol.SetIsBoarding(false);
     }
 }
