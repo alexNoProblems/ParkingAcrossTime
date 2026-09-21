@@ -7,6 +7,11 @@ public class StickmanQueue : MonoBehaviour
 
    private float _frontMaxDistance;
 
+   public IReadOnlyList<Stickman> GetAll()
+   {
+      return _stickmen;
+   }
+   
    public void Initialize(float frontMaxDistance)
    {
       _frontMaxDistance = frontMaxDistance;

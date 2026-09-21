@@ -2,7 +2,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(BusMover), typeof(BusCapacity),  typeof(BusExhaustEffect))]
 [RequireComponent(typeof(AudioSource), typeof(BusShakeEffect))]
-public class Bus : MonoBehaviour
+public class Bus : MonoBehaviour, IColorFlickerTarget
 {
    [SerializeField] private ColorSetter _colorSetter;
    [SerializeField] private float _modelForwardOffsetY;
@@ -13,6 +13,7 @@ public class Bus : MonoBehaviour
    private AudioSource _engineAudioSource;
    private BusShakeEffect _shakeEffect;
    private BusSeats _seats;
+   private BusRegistry _registry;
    
    public BusMover Mover => _mover;
    public BusCapacity Capacity => _capacity;
@@ -31,12 +32,20 @@ public class Bus : MonoBehaviour
       _seats = GetComponentInChildren<BusSeats>();
    }
 
-   public void Initialize(BusRequest request, Vector3 startPosition, Vector3 targetPosition)
+   private void OnDestroy()
+   {
+      if (_registry != null)
+         _registry.Unregister(this);
+   }
+
+   public void Initialize(BusRequest request, Vector3 startPosition, Vector3 targetPosition, BusRegistry registry)
    {
       Color = request.Color;
       _colorSetter.SetColor(request.Color);
       _capacity.Initialize(request.Capacity);
       _mover.Initialize(startPosition, targetPosition);
+      _registry = registry;
+      _registry.Register(this);
    }
 
    public void SetLane(BusLane lane)
@@ -65,5 +74,16 @@ public class Bus : MonoBehaviour
 
       stickman.SitAt(seat);
       _capacity.TryBoard();
+   }
+
+   public void FlickerColor(StickmanColor color)
+   {
+      _colorSetter.SetColor(color);
+   }
+
+   public void SetColor(StickmanColor color)
+   {
+      Color = color;
+      _colorSetter.SetColor(color);
    }
 }

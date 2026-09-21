@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Stickman : MonoBehaviour
+public class Stickman : MonoBehaviour, IColorFlickerTarget
 {
    private const string SeatAnchorName = "SeatAnchor";
    
@@ -45,5 +45,16 @@ public class Stickman : MonoBehaviour
       transform.localScale = Vector3.one * _seatScaleMultiplier;
 
       _animator.SetRunning(false);
+   }
+
+   public void FlickerColor(StickmanColor color)
+   {
+      _colorSetter.SetColor(color);
+   }
+
+   public void SetColor(StickmanColor color)
+   {
+      Color  = color;
+      _colorSetter.SetColor(color);
    }
 }

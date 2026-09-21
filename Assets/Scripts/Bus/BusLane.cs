@@ -4,6 +4,7 @@ using UnityEngine;
 public class BusLane : MonoBehaviour
 {
     [SerializeField] private List<BusPrefabEntry> _busPrefabs;
+    [SerializeField] private BusRegistry _registry;
     [SerializeField] private Transform _spawnPoint;
     [SerializeField] private List<Transform> _parkingSlots;
 
@@ -81,7 +82,7 @@ public class BusLane : MonoBehaviour
         Bus prefab = FindPrefabForCapacity(request.Capacity);
         Bus bus = Instantiate(prefab, startPosition, _spawnPoint.rotation);
 
-        bus.Initialize(request, startPosition, targetPosition);
+        bus.Initialize(request, startPosition, targetPosition, _registry);
         bus.SetLane(this);
 
         if (startMoving)
