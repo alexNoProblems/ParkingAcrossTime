@@ -12,6 +12,8 @@ public class LevelDataInitializer : MonoBehaviour
     [SerializeField] private int _maxColorRunLength = 10;
     
     private StickmenLevelDataGenerator _stickmenLevelDataGenerator;
+    
+    public int CurrentLevel => _currentLevel;
 
     private void Awake()
     {
