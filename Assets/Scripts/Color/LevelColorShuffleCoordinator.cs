@@ -5,7 +5,6 @@ using UnityEngine;
 public class LevelColorShuffleCoordinator : MonoBehaviour
 {
     [SerializeField] private StickmanQueue _stickmanQueue;
-    [SerializeField] private BusRegistry _busRegistry;
     [SerializeField] private BusMovementGate _movementGate;
     [SerializeField] private float _blinkDuration = 1.49f;
     [SerializeField] private float _blinkInterval = 0.1f;
@@ -15,12 +14,11 @@ public class LevelColorShuffleCoordinator : MonoBehaviour
     public void TriggerShuffle()
     {
         IReadOnlyList<Stickman> stickmen = _stickmanQueue.GetAll();
-        IReadOnlyList<Bus> buses = _busRegistry.GetAll();
 
-        Dictionary<StickmanColor, int> supply = CalculateSupply(buses);
-        Dictionary<Stickman, StickmanColor> stickmanColors = AssignStickmanColors(stickmen, supply);
+        Dictionary<StickmanColor, int> currentCounts = CalculateCurrentColorCounts(stickmen);
+        Dictionary<Stickman, StickmanColor> stickmanColors = AssignStickmanColors(stickmen, currentCounts);
 
-        var flickerPalette = new List<StickmanColor>(supply.Keys);
+        var flickerPalette = new List<StickmanColor>(currentCounts.Keys);
         var targets = new List<IColorFlickerTarget>(stickmen);
 
         var finalColors = new Dictionary<IColorFlickerTarget, StickmanColor>();
@@ -28,6 +26,21 @@ public class LevelColorShuffleCoordinator : MonoBehaviour
             finalColors[pair.Key] = pair.Value;
 
         StartCoroutine(ShuffleWithBusesPaused(targets, flickerPalette, finalColors));
+    }
+
+    private Dictionary<StickmanColor, int> CalculateCurrentColorCounts(IReadOnlyList<Stickman> stickmen)
+    {
+        var counts = new Dictionary<StickmanColor, int>();
+
+        foreach (Stickman stickman in stickmen)
+        {
+            if (!counts.ContainsKey(stickman.Color))
+                counts[stickman.Color] = 0;
+
+            counts[stickman.Color]++;
+        }
+
+        return counts;
     }
     
     private IEnumerator ShuffleWithBusesPaused(List<IColorFlickerTarget> targets, List<StickmanColor> flickerPalette,
@@ -38,21 +51,6 @@ public class LevelColorShuffleCoordinator : MonoBehaviour
         yield return _shuffleRoutine.Run(targets, flickerPalette, finalColors, _blinkDuration, _blinkInterval);
 
         _movementGate.Resume();
-    }
-
-    private Dictionary<StickmanColor, int> CalculateSupply(IReadOnlyList<Bus> buses)
-    {
-        var supply = new Dictionary<StickmanColor, int>();
-
-        foreach (Bus bus in buses)
-        {
-            if (!supply.ContainsKey(bus.Color))
-                supply[bus.Color] = 0;
-
-            supply[bus.Color] += bus.Capacity.Capacity;
-        }
-
-        return supply;
     }
 
     private Dictionary<Stickman, StickmanColor> AssignStickmanColors(IReadOnlyList<Stickman> stickmen,

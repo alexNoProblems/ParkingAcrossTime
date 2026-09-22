@@ -3772,7 +3772,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _stickmanQueue: {fileID: 1547663147}
-  _busRegistry: {fileID: 1291375667}
   _movementGate: {fileID: 1291375668}
   _blinkDuration: 1.49
   _blinkInterval: 0.1
@@ -4408,6 +4407,7 @@ GameObject:
   - component: {fileID: 1170323584}
   - component: {fileID: 1170323583}
   - component: {fileID: 1170323582}
+  - component: {fileID: 1170323585}
   m_Layer: 0
   m_Name: SceneAudio
   m_TagString: Untagged
@@ -4440,7 +4440,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 090817f4518f04c188c193c4c7980aa0, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -4538,7 +4538,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.25
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -4636,10 +4636,109 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _busHornSource: {fileID: 1170323583}
   _busHornSfx: {fileID: 8300000, guid: ceda04df8bb634dbc9c0f3a0fb9dc048, type: 3}
-  _cityNoiseSource: {fileID: 1170323583}
+  _cityNoiseSource: {fileID: 1170323582}
   _cityNoiseSfx: {fileID: 8300000, guid: 090817f4518f04c188c193c4c7980aa0, type: 3}
+  _backgroungMusicSource: {fileID: 1170323583}
+  _backgroundMusic: {fileID: 8300000, guid: 124e15c94e59343f987fa83137b0df68, type: 3}
   _cityNoiseTargetVolume: 0.2
   _cityNoiseFadeDuration: 0.5
+  _cityNoiseFadeStartDelay: 2
+--- !u!82 &1170323585
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1170323580}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &1176669558
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5434,6 +5533,7 @@ MonoBehaviour:
   _boardingPoint: {fileID: 1281317466}
   _exitPoint: {fileID: 1715299875}
   _queue: {fileID: 1547663147}
+  _queueStickmenCounter: {fileID: 1246559371}
   _busRoute: {fileID: 1391122059}
   _patrolManager: {fileID: 1291375664}
   _audioSource: {fileID: 1291375665}

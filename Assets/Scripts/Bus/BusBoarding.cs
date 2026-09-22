@@ -9,6 +9,7 @@ public class BusBoarding : MonoBehaviour
     [SerializeField] private Transform _boardingPoint;
     [SerializeField] private Transform _exitPoint;
     [SerializeField] private StickmanQueue _queue;
+    [SerializeField] private QueueStickmenCounter _queueStickmenCounter;
     [SerializeField] private BusRoute _busRoute;
     [SerializeField] private BusPatrolManager _patrolManager;
     [SerializeField] private AudioSource _audioSource;
@@ -37,6 +38,7 @@ public class BusBoarding : MonoBehaviour
         {
             _queue.DequeueFront();
             bus.Seat(front);
+            _queueStickmenCounter.Decrease();
 
             if (_stickmanLandingSfx != null)
                 _audioSource.PlayOneShot(_stickmanLandingSfx);
