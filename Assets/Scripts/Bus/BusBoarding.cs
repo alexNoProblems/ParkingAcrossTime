@@ -11,6 +11,8 @@ public class BusBoarding : MonoBehaviour
     [SerializeField] private StickmanQueue _queue;
     [SerializeField] private BusRoute _busRoute;
     [SerializeField] private BusPatrolManager _patrolManager;
+    [SerializeField] private AudioSource _audioSource;
+    [SerializeField] private AudioClip _stickmanLandingSfx;
     [SerializeField] private float _boardingInterval = 0.3f;
     
     private WaitForSeconds _boardingWait;
@@ -35,6 +37,9 @@ public class BusBoarding : MonoBehaviour
         {
             _queue.DequeueFront();
             bus.Seat(front);
+
+            if (_stickmanLandingSfx != null)
+                _audioSource.PlayOneShot(_stickmanLandingSfx);
             
             yield return _boardingWait;
             

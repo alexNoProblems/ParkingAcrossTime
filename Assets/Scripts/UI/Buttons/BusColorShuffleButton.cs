@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BusColorShuffleButton : MonoBehaviour
 {
-    [SerializeField] private LevelColorShuffleCoordinator _levelCoordinator;
+    [SerializeField] private BusParkingShuffler _parkingShuffler;
     [SerializeField] private AudioSource _audioSource;
     [SerializeField] private AudioClip _blinkSound;
 
@@ -11,6 +11,6 @@ public class BusColorShuffleButton : MonoBehaviour
         if (_blinkSound != null)
             _audioSource.PlayOneShot(_blinkSound);
         
-        _levelCoordinator.TriggerShuffle();
+        _parkingShuffler.Shuffle();
     }
 }

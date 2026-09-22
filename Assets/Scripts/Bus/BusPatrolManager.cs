@@ -5,6 +5,7 @@ using UnityEngine;
 public class BusPatrolManager : MonoBehaviour
 {
     [SerializeField] private BusBoarding _boarding;
+    [SerializeField] private BusMovementGate _movementGate;
     [SerializeField] private int _maxConcurrentPatrols = 3;
     [SerializeField] private float _moveSpeed = 4f;
     [SerializeField] private float _minSpacing = 2f;
@@ -24,6 +25,9 @@ public class BusPatrolManager : MonoBehaviour
 
     private void Update()
     {
+        if (_movementGate != null && _movementGate.IsPaused)
+            return;
+        
         for (int i = _activeStates.Count - 1; i >= 0; i--)
         {
            IBusMovementState state = _activeStates[i];

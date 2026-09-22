@@ -7,10 +7,12 @@ public class BusLane : MonoBehaviour
     [SerializeField] private BusRegistry _registry;
     [SerializeField] private Transform _spawnPoint;
     [SerializeField] private List<Transform> _parkingSlots;
-
+    [SerializeField] private BusMovementGate _movementGate;
+    
     private readonly List<Bus> _busesInLane = new List<Bus>();
     private readonly Queue<BusRequest> _pendingRequests = new Queue<BusRequest>();
 
+    public IReadOnlyList<Bus> BusesInLane => _busesInLane;
     public int SlotCount => _parkingSlots.Count;
     public int PendingAndActiveCount => _busesInLane.Count + _pendingRequests.Count;
     private bool HasFreeSlot => _busesInLane.Count < _parkingSlots.Count;
@@ -67,6 +69,17 @@ public class BusLane : MonoBehaviour
         Destroy(bus.gameObject);
     }
 
+    public void SetParkedBuses(List<Bus> buses)
+    {
+        _busesInLane.Clear();
+        _busesInLane.AddRange(buses);
+        
+        foreach (Bus bus in _busesInLane)
+            bus.SetLane(this);
+        
+        ShiftBusesForward();
+    }
+
     private void TrySpawnNext()
     {
         if (!HasFreeSlot || _pendingRequests.Count == 0)
@@ -82,7 +95,7 @@ public class BusLane : MonoBehaviour
         Bus prefab = FindPrefabForCapacity(request.Capacity);
         Bus bus = Instantiate(prefab, startPosition, _spawnPoint.rotation);
 
-        bus.Initialize(request, startPosition, targetPosition, _registry);
+        bus.Initialize(request, startPosition, targetPosition, _registry, _movementGate);
         bus.SetLane(this);
 
         if (startMoving)
@@ -103,10 +116,10 @@ public class BusLane : MonoBehaviour
 
         return _busPrefabs[0].Prefab;
     }
-
+    
     private void ShiftBusesForward()
     {
         for (int i = 0; i < _busesInLane.Count; i++)
-            _busesInLane[i].Mover.SetTarget(_parkingSlots[i].position);
+            _busesInLane[i].Mover.SetTarget(_parkingSlots[i].position, _spawnPoint.rotation);
     }
 }

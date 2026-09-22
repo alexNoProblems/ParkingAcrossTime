@@ -6,6 +6,7 @@ public class LevelColorShuffleCoordinator : MonoBehaviour
 {
     [SerializeField] private StickmanQueue _stickmanQueue;
     [SerializeField] private BusRegistry _busRegistry;
+    [SerializeField] private BusMovementGate _movementGate;
     [SerializeField] private float _blinkDuration = 1.49f;
     [SerializeField] private float _blinkInterval = 0.1f;
     
@@ -26,7 +27,17 @@ public class LevelColorShuffleCoordinator : MonoBehaviour
         foreach (var pair in stickmanColors)
             finalColors[pair.Key] = pair.Value;
 
-        StartCoroutine(_shuffleRoutine.Run(targets, flickerPalette, finalColors, _blinkDuration, _blinkInterval));
+        StartCoroutine(ShuffleWithBusesPaused(targets, flickerPalette, finalColors));
+    }
+    
+    private IEnumerator ShuffleWithBusesPaused(List<IColorFlickerTarget> targets, List<StickmanColor> flickerPalette,
+        Dictionary<IColorFlickerTarget, StickmanColor> finalColors)
+    {
+        _movementGate.Pause();
+
+        yield return _shuffleRoutine.Run(targets, flickerPalette, finalColors, _blinkDuration, _blinkInterval);
+
+        _movementGate.Resume();
     }
 
     private Dictionary<StickmanColor, int> CalculateSupply(IReadOnlyList<Bus> buses)

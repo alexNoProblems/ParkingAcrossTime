@@ -8,15 +8,20 @@ public class BusMover : MonoBehaviour
     private readonly MovementRotator _rotator = new MovementRotator();
     
     private Vector3 _targetPosition;
+    private Quaternion? _finalRotation;
     private Queue<Vector3> _pathQueue;
     private bool _isMoving;
     private WaitUntil _stoppedWait;
+    private BusMovementGate _gate;
     
     public bool IsMoving { get; private set; }
     public WaitUntil StoppedWait => _stoppedWait ??= new WaitUntil(() => !IsMoving);
 
     private void Update()
     {
+        if (_gate != null && _gate.IsPaused)
+            return;
+        
         if (!_isMoving)
         {
             IsMoving = false;
@@ -34,6 +39,9 @@ public class BusMover : MonoBehaviour
 
                 return;
             }
+            
+            if (_finalRotation.HasValue)
+                transform.rotation = _finalRotation.Value;
             
             _isMoving = false;
             IsMoving = false;
@@ -53,6 +61,11 @@ public class BusMover : MonoBehaviour
         _targetPosition = targetPosition;
     }
 
+    public void SetGate(BusMovementGate gate)
+    {
+        _gate = gate;
+    }
+
     public void StartMoving()
     {
         _isMoving = true;
@@ -61,11 +74,14 @@ public class BusMover : MonoBehaviour
     public void StopMoving()
     {
         _isMoving = false;
+        _pathQueue = null;
     }
 
-    public void SetTarget(Vector3 targetPosition)
+    public void SetTarget(Vector3 targetPosition, Quaternion? finalRotation = null)
     {
         _targetPosition = targetPosition;
+        _pathQueue = null;
+        _finalRotation = finalRotation;
         _isMoving = true;
     }
 
@@ -76,6 +92,7 @@ public class BusMover : MonoBehaviour
         
         _pathQueue = new Queue<Vector3>(waypoints);
         _targetPosition = _pathQueue.Dequeue();
+        _finalRotation = null;
         _isMoving = true;
     }
 }

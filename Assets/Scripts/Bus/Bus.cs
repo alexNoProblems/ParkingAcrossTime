@@ -38,12 +38,13 @@ public class Bus : MonoBehaviour, IColorFlickerTarget
          _registry.Unregister(this);
    }
 
-   public void Initialize(BusRequest request, Vector3 startPosition, Vector3 targetPosition, BusRegistry registry)
+   public void Initialize(BusRequest request, Vector3 startPosition, Vector3 targetPosition, BusRegistry registry, BusMovementGate gate)
    {
       Color = request.Color;
       _colorSetter.SetColor(request.Color);
       _capacity.Initialize(request.Capacity);
       _mover.Initialize(startPosition, targetPosition);
+      _mover.SetGate(gate);
       _registry = registry;
       _registry.Register(this);
    }
