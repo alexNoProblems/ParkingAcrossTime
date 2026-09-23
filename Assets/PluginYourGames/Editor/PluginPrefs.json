@@ -1,9 +1,18 @@
 {
-    "stringPrefs": [],
+    "stringPrefs": [
+        {
+            "key": "SelectModuleToggle_YG2",
+            "value": "YandexGames"
+        }
+    ],
     "intPrefs": [
         {
             "key": "FirstStartup_YG2",
             "value": 2
+        },
+        {
+            "key": "NotificationUpdate_YG2",
+            "value": 1
         }
     ],
     "floatPrefs": []
