@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class BusSelector
@@ -15,6 +16,8 @@ public class BusSelector
         _feedbackAudioSource = feedbackAudioSource;
         _wrongSelectionClip = wrongSelectionClip;
     }
+
+    public event Action<Bus> BusSelected;
 
     public void Select(Bus bus)
     {
@@ -45,6 +48,8 @@ public class BusSelector
         releasedBus.PlayEngineSound();
 
         _busBoarding.HandleReleasedBus(releasedBus);
+        
+        BusSelected?.Invoke(bus);
     }
 
     private void PlayWrongSelectionFeedback(Bus bus)

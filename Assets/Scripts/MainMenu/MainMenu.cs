@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MainMenuController : MonoBehaviour
+public class MainMenu : MonoBehaviour
 {
    [SerializeField] private string _gameSceneName = "Level_1";
    [SerializeField] private GameObject _settingsPanel;

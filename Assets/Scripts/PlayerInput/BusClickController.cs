@@ -10,6 +10,8 @@ public class BusClickController : MonoBehaviour
    [SerializeField] private AudioClip _wrongSelectionClip;
 
    private BusSelector _selector;
+   
+   public BusSelector Selector => _selector;
 
    private void Awake()
    {
