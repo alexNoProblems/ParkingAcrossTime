@@ -4,12 +4,15 @@ public class AdaptivePopupPosition : MonoBehaviour
 {
     [SerializeField] private RectTransform _rect;
     [SerializeField] private RectTransform _canvasRect;
-    [SerializeField] private Camera _camera;
-    [SerializeField] private float _viewportDepth = 10f;
-    [SerializeField] private float _bottomMarginPixels = 40f;
+    [SerializeField] private float _bottomMarginFraction = -0.35f;
 
     private int _lastScreenWidth;
     private int _lastScreenHeight;
+
+    private void Start()
+    {
+        Apply();
+    }
 
     private void Update()
     {
@@ -24,14 +27,11 @@ public class AdaptivePopupPosition : MonoBehaviour
 
     private void Apply()
     {
-        Vector3 worldBottomCenter = _camera.ViewportToWorldPoint(new Vector3(0.5f, 0f, _viewportDepth));
-        Vector2 screenPoint = _camera.WorldToScreenPoint(worldBottomCenter);
-
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvasRect, screenPoint, null, out Vector2 localPoint);
+        float margin = _canvasRect.rect.height * _bottomMarginFraction;
 
         Vector2 position = _rect.anchoredPosition;
         position.x = 0f;
-        position.y = localPoint.y + _bottomMarginPixels;
+        position.y = margin;
         _rect.anchoredPosition = position;
     }
 }
