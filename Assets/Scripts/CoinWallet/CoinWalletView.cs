@@ -2,10 +2,13 @@ using System;
 using TMPro;
 using UnityEngine;
 
-public class CoinWalleView : MonoBehaviour
+public class CoinWalletView : MonoBehaviour
 {
     [SerializeField] private CoinWalletService _coinWalletService;
     [SerializeField] private TextMeshProUGUI _coinText;
+    [SerializeField] private RectTransform _flyTarget;
+    
+    public RectTransform FlyTarget => _flyTarget;
 
     private void OnEnable()
     {

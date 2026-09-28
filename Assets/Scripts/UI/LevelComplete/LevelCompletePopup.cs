@@ -5,7 +5,7 @@ public class LevelCompletePopup : MonoBehaviour
 {
     [SerializeField] private BusRegistry _busRegistry;
     [SerializeField] private GameObject _root;
-    [SerializeField] private float _showDelay;
+    [SerializeField] private float _showDelay = 1.5f;
 
     private WaitForSeconds _delayWait;
 
