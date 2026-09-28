@@ -14,6 +14,7 @@ public class BusBoarding : MonoBehaviour
     [SerializeField] private BusPatrolManager _patrolManager;
     [SerializeField] private AudioSource _audioSource;
     [SerializeField] private AudioClip _stickmanLandingSfx;
+    [SerializeField] private BoardingTutorialHandler _boardingTutorialHandler;
     [SerializeField] private float _boardingInterval = 0.3f;
     
     private WaitForSeconds _boardingWait;
@@ -112,6 +113,9 @@ public class BusBoarding : MonoBehaviour
         path.Add(_boardingPoint.position);
 
         yield return _patrolManager.MoveAlongPath(bus, path, effectivePriority: MovementPriority.Entering);
+
+        if (_boardingTutorialHandler != null)
+            yield return _boardingTutorialHandler.PlayTutorial();
 
         IBusMovementState stationary = _patrolManager.RegisterStationary(bus, MovementPriority.OnLooped);
 

@@ -10,13 +10,13 @@ public class TutorialPopup : MonoBehaviour
     [SerializeField] private float _characterPerSecond = 30f;
 
     private Coroutine _typingRoutine;
-    private WaitForSeconds _typingDelay;
+    private WaitForSecondsRealtime _typingDelay;
     private string _fullMessage;
     
     private void Awake()
     {
         _fullMessage =  _text.text;
-        _typingDelay = new WaitForSeconds(1f / _characterPerSecond);
+        _typingDelay = new WaitForSecondsRealtime(1f / _characterPerSecond);
     }
 
     public void Show()
