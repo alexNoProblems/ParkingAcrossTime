@@ -4,7 +4,7 @@ using UnityEngine;
 public class LevelCompleteFireworks : MonoBehaviour
 {
     [SerializeField] private BusRegistry _busRegistry;
-    [SerializeField] private ParticleSystem[] _fireworks;
+    [SerializeField] private FireworksUIEffect _fireworksEffect;
 
     private void OnEnable()
     {
@@ -18,7 +18,6 @@ public class LevelCompleteFireworks : MonoBehaviour
 
     private void PlayFireworks()
     {
-        foreach (ParticleSystem firework in _fireworks)
-            firework.Play();
+        _fireworksEffect.Play();
     }
 }
