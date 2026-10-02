@@ -14,8 +14,10 @@ public class BusSpawner : MonoBehaviour, ISpawner<BusSpawnData>
         _waitForSeconds = new WaitForSeconds(_spawnInterval);
     }
 
-    public void FillInitial(List<BusRequest> requests)
+    public void FillInitial(List<BusRequest> requests, StickmanColor frontRowColor)
     {
+        EnsureColorInFrontRow(requests, frontRowColor);
+
         int totalSlots = 0;
 
         foreach (BusLane lane in _lanes)
@@ -40,6 +42,28 @@ public class BusSpawner : MonoBehaviour, ISpawner<BusSpawnData>
             RequestBus(new BusRequest { Color = data.Color, Capacity = capacity });
 
             yield return _waitForSeconds;
+        }
+    }
+
+    private void EnsureColorInFrontRow(List<BusRequest> requests, StickmanColor color)
+    {
+        int frontRowSize = Mathf.Min(_lanes.Count, requests.Count);
+
+        for (int i = 0; i < frontRowSize; i++)
+        {
+            if (requests[i].Color == color)
+                return;
+        }
+
+        for (int i = frontRowSize; i < requests.Count; i++)
+        {
+            if (requests[i].Color != color)
+                continue;
+
+            int frontIndex = Random.Range(0, frontRowSize);
+            (requests[frontIndex], requests[i]) = (requests[i], requests[frontIndex]);
+
+            return;
         }
     }
 

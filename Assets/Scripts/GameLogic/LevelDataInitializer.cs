@@ -39,12 +39,12 @@ public class LevelDataInitializer : MonoBehaviour
                 busRequests.Add(new BusRequest { Color = color, Capacity = capacity });
         }
  
-        _queueStickmenCounter.SetInitialCount(totalStickmen);
-        _busSpawner.FillInitial(busRequests);
- 
         var orderGenerator = new StickmanQueueOrderGenerator(_minColorRunLength, _maxColorRunLength);
         List<(StickmanColor Color, int Count)> spawnOrder = orderGenerator.GenerateOrder(colorCounts);
- 
+
+        _queueStickmenCounter.SetInitialCount(totalStickmen);
+        _busSpawner.FillInitial(busRequests, spawnOrder[0].Color);
+
         StartCoroutine(SpawnStickmenSequentially(spawnOrder));
     }
  

@@ -28,12 +28,19 @@ public class GameTutorialHandler : MonoBehaviour
 
     private IEnumerator WaitForBusesThenStart()
     {
-        while (!AllLanesReady() || _stickmanQueue.PeekFront() == null)
-            yield return null;
+        Transform target = null;
+
+        while (target == null)
+        {
+            if (AllLanesReady() && _stickmanQueue.PeekFront() != null)
+                target = FindTargetAnchor();
+
+            if (target == null)
+                yield return null;
+        }
 
         _busSelector = _busClickController.Selector;
 
-        Transform target = FindTargetAnchor();
         Vector2 screenPosition = WorldToCanvasPosition(target.position);
         _pointer.SetBasePosition(screenPosition);
 
