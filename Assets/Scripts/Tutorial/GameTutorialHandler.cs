@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(TutorialPointer),  typeof(TutorialPopup))]
+[RequireComponent(typeof(TutorialPointer), typeof(TutorialPopup))]
 public class GameTutorialHandler : MonoBehaviour
 {
     [SerializeField] private Camera _camera;
@@ -14,6 +14,9 @@ public class GameTutorialHandler : MonoBehaviour
     private TutorialPointer _pointer;
     private TutorialPopup _popup;
     private BusSelector _busSelector;
+    private bool _isReady;
+    private bool _isCompleted;
+    private bool _isSuspended;
 
     private void Awake()
     {
@@ -24,6 +27,28 @@ public class GameTutorialHandler : MonoBehaviour
     private void Start()
     {
         StartCoroutine(WaitForBusesThenStart());
+    }
+
+    public void Suspend()
+    {
+        if (_isCompleted || _isSuspended)
+            return;
+
+        _isSuspended = true;
+
+        if (_isReady)
+            HideTutorial();
+    }
+
+    public void Resume()
+    {
+        if (_isCompleted || !_isSuspended)
+            return;
+
+        _isSuspended = false;
+
+        if (_isReady)
+            ShowTutorial();
     }
 
     private IEnumerator WaitForBusesThenStart()
@@ -44,8 +69,23 @@ public class GameTutorialHandler : MonoBehaviour
         Vector2 screenPosition = WorldToCanvasPosition(target.position);
         _pointer.SetBasePosition(screenPosition);
 
-        _popup.Show();
         _busSelector.BusSelected += OnBusSelected;
+        _isReady = true;
+
+        if (!_isSuspended)
+            ShowTutorial();
+    }
+
+    private void ShowTutorial()
+    {
+        gameObject.SetActive(true);
+        _popup.Show();
+    }
+
+    private void HideTutorial()
+    {
+        _popup.Hide();
+        gameObject.SetActive(false);
     }
 
     private bool AllLanesReady()
@@ -77,8 +117,8 @@ public class GameTutorialHandler : MonoBehaviour
     private void OnBusSelected(Bus bus)
     {
         _busSelector.BusSelected -= OnBusSelected;
-        _popup.Hide();
-        gameObject.SetActive(false);
+        _isCompleted = true;
+        HideTutorial();
     }
 
     private Vector2 WorldToCanvasPosition(Vector3 worldPosition)

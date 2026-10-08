@@ -18,12 +18,14 @@ public class BusSelector
     }
 
     public event Action<Bus> BusSelected;
+    public event Action NotFrontBusSelected;
 
     public void Select(Bus bus)
     {
         if (bus.Lane != null && !bus.Lane.IsFront(bus))
         {
             PlayWrongSelectionFeedback(bus);
+            NotFrontBusSelected?.Invoke();
 
             return;
         }
