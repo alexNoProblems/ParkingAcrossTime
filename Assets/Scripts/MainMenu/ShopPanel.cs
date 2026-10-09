@@ -15,6 +15,9 @@ public class ShopPanel : MonoBehaviour
 
    private void OnEnable()
    {
+      if (_walletService == null)
+         _walletService = FindFirstObjectByType<CoinWalletService>();
+      
       YG2.onPurchaseSuccess += OnPurchaseSuccess;
       YG2.onRewardAdv += OnRewardAdv;
       YG2.onCloseRewardedAdv += OnRewardedClosed;
