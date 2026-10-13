@@ -4,36 +4,36 @@ using UnityEngine.UI;
 
 public class FireworksUIEffect : MonoBehaviour
 {
+    private const float EaseOutBase = 1f;
+    private const float CenterAnchor = 0.5f;
+    private const string SparkObjectName = "Burst";
+
     [SerializeField] private RectTransform _spawnArea;
     [SerializeField] private Sprite[] _burstSprites;
     [SerializeField] private Color[] _burstColors;
     [SerializeField] private int _burstCount = 8;
+    [SerializeField] private float _sparkSize = 100f;
     [SerializeField] private float _riseDuration = 0.5f;
     [SerializeField] private float _riseSpriteScale = 0.3f;
     [SerializeField] private float _minHeightFraction = 0.4f;
     [SerializeField] private float _maxHeightFraction = 0.8f;
     [SerializeField] private float _animationDuration = 0.5f;
     [SerializeField] private float _maxScale = 1.5f;
-    [SerializeField] private float _easeOutBase = 1f;
     [SerializeField] private float _easeOutPower = 3f;
 
     [ContextMenu("Test Play")]
     public void Play()
     {
-        StartCoroutine(SpawnBursts());
-    }
+        if (_burstSprites == null || _burstSprites.Length == 0)
+            return;
 
-    private IEnumerator SpawnBursts()
-    {
         for (int i = 0; i < _burstCount; i++)
             StartCoroutine(FlyAndBurst(CreateSpark()));
-        
-        yield break;
     }
 
     private Image CreateSpark()
     {
-        var sparkObject = new GameObject("Burst", typeof(RectTransform), typeof(Image));
+        var sparkObject = new GameObject(SparkObjectName, typeof(RectTransform), typeof(Image));
         sparkObject.transform.SetParent(_spawnArea, false);
 
         var image = sparkObject.GetComponent<Image>();
@@ -44,10 +44,8 @@ public class FireworksUIEffect : MonoBehaviour
             image.color = _burstColors[Random.Range(0, _burstColors.Length)];
 
         RectTransform rect = image.rectTransform;
-        rect.anchorMin = new Vector2(0.5f, 0.5f);
-        rect.anchorMax = new Vector2(0.5f, 0.5f);
-        rect.pivot = new Vector2(0.5f, 0.5f);
-        rect.sizeDelta = new Vector2(100f, 100f);
+        rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(CenterAnchor, CenterAnchor);
+        rect.sizeDelta = Vector2.one * _sparkSize;
         rect.localScale = Vector3.one * _riseSpriteScale;
         rect.anchoredPosition = RandomBottomPosition();
 
@@ -58,10 +56,7 @@ public class FireworksUIEffect : MonoBehaviour
     {
         Vector2 size = _spawnArea.rect.size;
 
-        float x = Random.Range(-size.x / 2f, size.x / 2f);
-        float y = -size.y / 2f;
-
-        return new Vector2(x, y);
+        return new Vector2(Random.Range(-size.x / 2f, size.x / 2f), -size.y / 2f);
     }
 
     private IEnumerator FlyAndBurst(Image image)
@@ -72,20 +67,9 @@ public class FireworksUIEffect : MonoBehaviour
         Vector2 start = rect.anchoredPosition;
         float targetY = Random.Range(size.y * _minHeightFraction, size.y * _maxHeightFraction) - size.y / 2f;
         Vector2 end = new Vector2(start.x, targetY);
-        
-        Debug.Log($"spawnArea size={size}, start={start}, end={end}, riseDuration={_riseDuration}");
 
-        float elapsed = 0f;
-
-        while (elapsed < _riseDuration)
-        {
-            float progress = elapsed / _riseDuration;
-
-            rect.anchoredPosition = Vector2.Lerp(start, end, progress);
-            elapsed += Time.unscaledDeltaTime;
-
-            yield return null;
-        }
+        yield return RunTimed(_riseDuration, progress =>
+            rect.anchoredPosition = Vector2.Lerp(start, end, progress));
 
         rect.anchoredPosition = end;
 
@@ -94,27 +78,35 @@ public class FireworksUIEffect : MonoBehaviour
 
     private IEnumerator AnimateBurst(Image image)
     {
-        float elapsed = 0f;
         Color color = image.color;
 
-        while (elapsed < _animationDuration)
+        yield return RunTimed(_animationDuration, progress =>
         {
-            float progress = elapsed / _animationDuration;
+            image.rectTransform.localScale =
+                Vector3.one * Mathf.Lerp(_riseSpriteScale, _maxScale, EaseOut(progress));
 
-            image.rectTransform.localScale = Vector3.one * Mathf.Lerp(_riseSpriteScale, _maxScale, EaseOut(progress));
             color.a = Mathf.Lerp(1f, 0f, progress);
             image.color = color;
-
-            elapsed += Time.unscaledDeltaTime;
-
-            yield return null;
-        }
+        });
 
         Destroy(image.gameObject);
     }
 
+    private IEnumerator RunTimed(float duration, System.Action<float> onProgress)
+    {
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            onProgress(elapsed / duration);
+            elapsed += Time.unscaledDeltaTime;
+
+            yield return null;
+        }
+    }
+
     private float EaseOut(float progress)
     {
-        return _easeOutBase - Mathf.Pow(_easeOutBase - progress, _easeOutPower);
+        return EaseOutBase - Mathf.Pow(EaseOutBase - progress, _easeOutPower);
     }
 }

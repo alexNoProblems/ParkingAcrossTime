@@ -4,7 +4,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Button))]
 public class CloseShopPanelButton : MonoBehaviour
 {
-    [SerializeField] private GameObject _shopPanel;
+    [SerializeField] private GameObject _panel;
     
     private Button _button;
 
@@ -25,6 +25,6 @@ public class CloseShopPanelButton : MonoBehaviour
 
     private void Close()
     {
-        _shopPanel.SetActive(false);
+        _panel.SetActive(false);
     }
 }
