@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using YG;
 
 public class LevelDataInitializer : MonoBehaviour
 {
-    [SerializeField] private int _currentLevel = 1;
     [SerializeField] private StickmenSpawner _stickmenSpawner;
     [SerializeField] private BusSpawner _busSpawner;
     [SerializeField] private QueueStickmenCounter _queueStickmenCounter;
@@ -12,8 +12,8 @@ public class LevelDataInitializer : MonoBehaviour
     [SerializeField] private int _maxColorRunLength = 10;
     
     private StickmenLevelDataGenerator _stickmenLevelDataGenerator;
-    
-    public int CurrentLevel => _currentLevel;
+
+    public int CurrentLevel => Mathf.Max(1, YG2.saves.level);
 
     private void Awake()
     {
@@ -23,8 +23,10 @@ public class LevelDataInitializer : MonoBehaviour
 
     private void Start()
     {
+        int level = CurrentLevel;
+        
         Dictionary<StickmanColor, StickmenLevelDataGenerator.LevelColorData> levelData =
-            _stickmenLevelDataGenerator.GenerateLevelData(_currentLevel);
+            _stickmenLevelDataGenerator.GenerateLevelData(level);
  
         int totalStickmen = 0;
         var busRequests = new List<BusRequest>();
@@ -42,6 +44,9 @@ public class LevelDataInitializer : MonoBehaviour
         var orderGenerator = new StickmanQueueOrderGenerator(_minColorRunLength, _maxColorRunLength);
         List<(StickmanColor Color, int Count)> spawnOrder = orderGenerator.GenerateOrder(colorCounts);
 
+        if (spawnOrder.Count == 0)
+            return;
+        
         _queueStickmenCounter.SetInitialCount(totalStickmen);
         _busSpawner.FillInitial(busRequests, spawnOrder[0].Color);
 

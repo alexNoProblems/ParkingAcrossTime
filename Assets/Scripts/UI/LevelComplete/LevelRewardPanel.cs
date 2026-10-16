@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using YG;
 
@@ -16,18 +17,24 @@ public class LevelRewardPanel : MonoBehaviour
     [SerializeField] private int _baseReward = 15;
     [SerializeField] private int _adMultiplier = 5;
     [SerializeField] private string _levelTextFormat = "Уровень {0} пройден!";
-    
+
     private CoinWalletService _walletService;
+    private NextLevelLoader _nextLevelLoader;
     private bool _isClaimed;
+
+    private void Awake()
+    {
+        _nextLevelLoader = new NextLevelLoader(SceneManager.GetActiveScene().name);
+    }
 
     private void OnEnable()
     {
         _walletService = FindAnyObjectByType<CoinWalletService>();
         _isClaimed = false;
-        
+
         _levelText.text = string.Format(_levelTextFormat, _levelData.CurrentLevel);
         _rewardText.text = $"+{_baseReward}";
-        
+
         _claimButton.onClick.AddListener(OnClaimClicked);
         _adButton.onClick.AddListener(OnAdClicked);
         YG2.onRewardAdv += OnRewardAdv;
@@ -54,7 +61,7 @@ public class LevelRewardPanel : MonoBehaviour
     {
         if (id != RewardedAdId)
             return;
-        
+
         Claim(_baseReward * _adMultiplier);
     }
 
@@ -70,7 +77,7 @@ public class LevelRewardPanel : MonoBehaviour
         _coinFly.Play(() =>
         {
             _walletService.Wallet.Add(amount);
-            gameObject.SetActive(false);
+            _nextLevelLoader.LoadNextLevel();
         });
     }
 }

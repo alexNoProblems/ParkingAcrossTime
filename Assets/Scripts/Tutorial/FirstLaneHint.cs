@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using YG;
 
 public class FirstLaneHint : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class FirstLaneHint : MonoBehaviour
 
    private BusSelector _busSelector;
    private WaitForSecondsRealtime _displayWait;
-   private bool _hasShown;
+   private bool _isShowing;
 
    private void Awake()
    {
@@ -20,6 +21,9 @@ public class FirstLaneHint : MonoBehaviour
    private void Start()
    {
       _popup.Hide();
+
+      if (YG2.saves.firstLaneHintShown)
+         return;
       
       _busSelector = _clickController.Selector;
       _busSelector.NotFrontBusSelected += OnNotFrontBusSelected;
@@ -33,21 +37,31 @@ public class FirstLaneHint : MonoBehaviour
 
    private IEnumerator ShownRoutine()
    {
-      _gameTutorialHandler.Suspend();
+      _isShowing = true;
+
+      if (_gameTutorialHandler != null)
+         _gameTutorialHandler.Suspend();
+     
       _popup.Show();
       
       yield return _displayWait;
       
       _popup.Hide();
-      _gameTutorialHandler.Resume();
+
+      if (_gameTutorialHandler != null)
+         _gameTutorialHandler.Resume();
+      
+      YG2.saves.firstLaneHintShown = true;
+      YG2.SaveProgress();
+      
+      _isShowing = false;
    }
    
    private void OnNotFrontBusSelected()
    {
-      if (_hasShown)
+      if (_isShowing || YG2.saves.firstLaneHintShown)
          return;
       
-      _hasShown = true;
       StartCoroutine(ShownRoutine());
    }
 }

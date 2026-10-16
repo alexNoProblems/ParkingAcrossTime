@@ -13,6 +13,8 @@
         false,
         false
     ],
-    "idSave": 29,
-    "coins": 47425
+    "idSave": 35,
+    "coins": 15,
+    "firstLaneHintShown": true,
+    "level": 2
 }
